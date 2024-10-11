@@ -1,5 +1,6 @@
 # A theme for the lsd utility. Based on the Solarized color theme.
 # Made for Solarized-base terminal themes, but works well with most light themes.
+# https://github.com/bradleyhop/lsd-solarized-theme?tab=readme-ov-file
 user: 136
 group: 245
 permission:
