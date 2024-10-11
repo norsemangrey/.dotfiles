@@ -1,0 +1,2 @@
+"fastfetch-windows-config.jsonc" $Env:USERPROFILE"\.config\fastfetch\config.jsonc"
+"fastfetch-ascii-art.txt" $Env:USERPROFILE"\.config\fastfetch\ascii.txt"

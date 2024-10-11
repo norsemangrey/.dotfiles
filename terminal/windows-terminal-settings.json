@@ -1,0 +1,214 @@
+{
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "actions":
+    [
+        {
+            "command":
+            {
+                "action": "copy",
+                "singleLine": false
+            },
+            "id": "User.copy.644BA8F2",
+            "keys": "ctrl+c"
+        },
+        {
+            "command":
+            {
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
+            },
+            "id": "User.splitPane.A6751878",
+            "keys": "alt+shift+d"
+        },
+        {
+            "command": "find",
+            "id": "User.find",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "command": "paste",
+            "id": "User.paste",
+            "keys": "ctrl+v"
+        }
+    ],
+    "alwaysShowNotificationIcon": false,
+    "copyFormatting": "none",
+    "copyOnSelect": false,
+    "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+    "initialRows": 35,
+    "newTabMenu":
+    [
+        {
+            "type": "remainingProfiles"
+        }
+    ],
+    "profiles":
+    {
+        "defaults":
+        {
+            "adjustIndistinguishableColors": "never",
+            "colorScheme":
+            {
+                "dark": "Solarized Dark (modified)",
+                "light": "Solarized Light Customized"
+            },
+            "font":
+            {
+                "cellHeight": "1.3",
+                "face": "FiraCode Nerd Font",
+                "size": 12
+            }
+        },
+        "list":
+        [
+            {
+                "commandline": "\"C:\\Program Files\\PowerShell\\7\\pwsh.exe\" -NoLogo -NoExit -File %USERPROFILE%\\Documents\\PowerShell\\PowerShell_Terminal_Startup.ps1",
+                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+                "hidden": false,
+                "name": "PowerShell",
+                "source": "Windows.Terminal.PowershellCore"
+            },
+            {
+                "guid": "{16208362-94fc-5b1f-a491-5b2624d5ab56}",
+                "hidden": true,
+                "name": "Visual Studio Debug Console",
+                "source": "VSDebugConsole"
+            },
+            {
+                "guid": "{51855cb2-8cce-5362-8f54-464b92b32386}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc"
+            },
+            {
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "Command Prompt"
+            }
+        ]
+    },
+    "schemes":
+    [
+        {
+            "background": "#132738",
+            "black": "#000000",
+            "blue": "#1460D2",
+            "brightBlack": "#555555",
+            "brightBlue": "#5555FF",
+            "brightCyan": "#6AE3FA",
+            "brightGreen": "#3BD01D",
+            "brightPurple": "#FF55FF",
+            "brightRed": "#F40E17",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#EDC809",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#00BBBB",
+            "foreground": "#FFFFFF",
+            "green": "#38DE21",
+            "name": "Cobalt2",
+            "purple": "#FF005D",
+            "red": "#FF0000",
+            "selectionBackground": "#FFFFFF",
+            "white": "#BBBBBB",
+            "yellow": "#FFE50A"
+        },
+        {
+            "background": "#000000",
+            "black": "#0C0C0C",
+            "blue": "#0037DA",
+            "brightBlack": "#767676",
+            "brightBlue": "#3B78FF",
+            "brightCyan": "#61D6D6",
+            "brightGreen": "#16C60C",
+            "brightPurple": "#B4009E",
+            "brightRed": "#E74856",
+            "brightWhite": "#F2F2F2",
+            "brightYellow": "#F9F1A5",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#3A96DD",
+            "foreground": "#FFFFFF",
+            "green": "#13A10E",
+            "name": "Color Scheme 11",
+            "purple": "#881798",
+            "red": "#C50F1F",
+            "selectionBackground": "#FFFFFF",
+            "white": "#CCCCCC",
+            "yellow": "#C19C00"
+        },
+        {
+            "background": "#282A36",
+            "black": "#21222C",
+            "blue": "#BD93F9",
+            "brightBlack": "#6272A4",
+            "brightBlue": "#D6ACFF",
+            "brightCyan": "#A4FFFF",
+            "brightGreen": "#69FF94",
+            "brightPurple": "#FF92DF",
+            "brightRed": "#FF6E6E",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#FFFFA5",
+            "cursorColor": "#F8F8F2",
+            "cyan": "#8BE9FD",
+            "foreground": "#F8F8F2",
+            "green": "#50FA7B",
+            "name": "Dracula",
+            "purple": "#FF79C6",
+            "red": "#FF5555",
+            "selectionBackground": "#44475A",
+            "white": "#F8F8F2",
+            "yellow": "#F1FA8C"
+        },
+        {
+            "background": "#002B36",
+            "black": "#005166",
+            "blue": "#268BD2",
+            "brightBlack": "#0E6880",
+            "brightBlue": "#839496",
+            "brightCyan": "#93A1A1",
+            "brightGreen": "#586E75",
+            "brightPurple": "#6C71C4",
+            "brightRed": "#CB4B16",
+            "brightWhite": "#FDF6E3",
+            "brightYellow": "#657B83",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#2AA198",
+            "foreground": "#839496",
+            "green": "#859900",
+            "name": "Solarized Dark (modified)",
+            "purple": "#D33682",
+            "red": "#DC322F",
+            "selectionBackground": "#FFFFFF",
+            "white": "#EEE8D5",
+            "yellow": "#B58900"
+        },
+        {
+            "background": "#FDF6E3",
+            "black": "#56595C",
+            "blue": "#2E8BCE",
+            "brightBlack": "#45484B",
+            "brightBlue": "#2176C7",
+            "brightCyan": "#259286",
+            "brightGreen": "#738A04",
+            "brightPurple": "#C61C6F",
+            "brightRed": "#BD3613",
+            "brightWhite": "#999690",
+            "brightYellow": "#A57705",
+            "cursorColor": "#536870",
+            "cyan": "#32A198",
+            "foreground": "#536870",
+            "green": "#85981C",
+            "name": "Solarized Light Customized",
+            "purple": "#D13A82",
+            "red": "#C94C22",
+            "selectionBackground": "#EEE8D5",
+            "white": "#A6A49D",
+            "yellow": "#B4881D"
+        }
+    ],
+    "showTabsInTitlebar": true,
+    "theme": "system",
+    "themes": [],
+    "useAcrylicInTabRow": true
+}

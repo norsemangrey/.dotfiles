@@ -1,0 +1,2 @@
+"lsd-colors.yaml" $Env:USERPROFILE"\.config\lsd\colors.yaml"
+"lsd-config.yaml" $Env:USERPROFILE"\.config\lsd\config.yaml"

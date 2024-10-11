@@ -1,0 +1,145 @@
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "source": ".\\.config\\fastfetch\\ascii.txt",
+        "padding": {
+            "top": 5,
+            "right": 10
+        },
+        "color": {
+            "1": "36"
+        },
+    },
+    "display": {
+        "percent": {
+            "type": 2
+        },
+        "size": {
+            "ndigits": 0
+        }
+    },
+    "modules": [
+        "break",
+        {
+            "type": "title",
+            "format": "               {1}  |    {2}",
+            "outputColor": "36"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "                 \u001b[30m●  \u001b[31m●  \u001b[32m●  \u001b[33m●  \u001b[34m●  \u001b[35m●  \u001b[36m●  \u001b[37m●"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "\u001b[33m╭──────────────── Software Information ────────────────╮"
+        },
+	"break",
+        {
+            "type": "os",
+            "format": "{3} {8} {6}",
+            "key": "     ➜  {#36}OS",
+            "keyColor": "33",
+        },
+        {
+            "type": "shell",
+            "key": "     ➜  {#36}Shell",
+            "keyColor": "33",
+        },
+        {
+            "type": "terminal",
+            "key": "     ➜  {#36}Terminal",
+            "keyColor": "33",
+        },
+        {
+            "type": "packages",
+            "key": "   󰏖  ➜  {#36}Packages",
+            "keyColor": "33",
+        },
+        "break",
+        // {
+        //     "type": "custom",
+        //     "format": "\u001b[33m├──────────────── Hardware Information ────────────────┤"
+        // },
+        {
+            "type": "custom",
+            "format": "\u001b[33m╭──────────────── Hardware Information ────────────────╮"
+        },
+        "break",
+        {
+            "type": "host",
+            "format": "{2}",
+            "key": "     ➜  {#36}Host",
+            "keyColor": "33",
+        },
+        {
+            "type": "board",
+            "format": "{2} {1}",
+            "key": "     ➜  {#36}Motherboard",
+            "keyColor": "33",
+        },
+        {
+            "type": "cpu",
+            "key": "     ➜  {#36}CPU",
+            "keyColor": "33",
+        },
+        {
+            "type": "gpu",
+            "format": "{2}",
+            "key": "   󰢮  ➜  {#36}GPU",
+            "keyColor": "33",
+        },
+        {
+            "type": "display",
+            "compactType": "scaled",
+            "key": "     ➜  {#36}Displays",
+            "keyColor": "33",
+        },
+        {
+            "type": "memory",
+            "format": "   {4} {1} / {2}",
+            "key": "   󰑭  ➜  {#36}Memory",
+            "keyColor": "33",
+        },
+        {
+            "type": "disk",
+            "format": "{13} {1} / {2}",
+            "key": "     ➜  {#36}Disk ({mountpoint:1}:)",
+            "keyColor": "33",
+            "showExternal": false
+        },
+        {
+            "type": "battery",
+            "format": "  {10} {5}",
+            "key": "     ➜  {#36}Battery",
+            "keyColor": "33",
+        },
+        "break",
+        // {
+        //     "type": "custom",
+        //     "format": "\u001b[33m├──────────────── Location Information ────────────────┤"
+        // },
+        {
+            "type": "custom",
+            "format": "\u001b[33m╭──────────────── Location Information ────────────────╮"
+        },
+        "break",
+        {
+            "type": "publicip",
+            "key": "   󰩠  ➜  {#36}Public IP",
+            "keyColor": "33"
+        },
+        {
+            "type": "localip",
+            "key": "   󰩟  ➜  {#36}Local IP",
+            "keyColor": "33",
+        },
+        "break",
+        // {
+        //     "type": "custom",
+        //     "format": "\u001b[33m╰────────────── \u001b[30m●  \u001b[31m●  \u001b[32m●  \u001b[33m●  \u001b[34m●  \u001b[35m●  \u001b[36m●  \u001b[37m● \u001b[33m────────────────╯"
+        // },
+        "break"
+    ]
+}

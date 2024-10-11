@@ -1,0 +1,2 @@
+"powershell-vscode-profile.ps1" $Env:USERPROFILE"\Documents\PowerShell\Microsoft.VSCode_profile.ps1"
+"powershell-vscode-startup.ps1" $Env:USERPROFILE"\Documents\PowerShell\PowerShell_VSCode_Startup.ps1"
