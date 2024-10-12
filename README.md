@@ -1,3 +1,5 @@
+NOTE: CURRENTLY NOT FUNCTIONING --- WORK IN PROGRESS
+
 Creating symlinks:
 
 CMD:
