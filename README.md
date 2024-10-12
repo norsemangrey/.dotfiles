@@ -1,6 +1,9 @@
 NOTE: CURRENTLY NOT FUNCTIONING --- WORK IN PROGRESS
 
-Creating symlinks:
+Run with:
+`Invoke-Expression (Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/norsemangrey/.dotfiles/master/git-install.ps1')`
+
+Creating symlinks manually:
 
 CMD:
 mklink <target-path> <link-path>
