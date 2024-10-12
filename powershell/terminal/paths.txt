@@ -1,2 +1,2 @@
-"powershell-terminal-profile.ps1" $Env:USERPROFILE"\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-"powershell-terminal-startup.ps1" $Env:USERPROFILE"\Documents\PowerShell\PowerShell_Terminal_Startup.ps1"
+powershell-terminal-profile.ps1 $Env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+powershell-terminal-startup.ps1 $Env:USERPROFILE\Documents\PowerShell\PowerShell_Terminal_Startup.ps1

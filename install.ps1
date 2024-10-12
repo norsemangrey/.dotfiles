@@ -4,10 +4,15 @@ $rootDir = (Get-Location)
 # Function to create directories if they don't exist
 function Ensure-DirectoryExists {
     param([string]$path)
+
     if (-not (Test-Path -Path $path)) {
+
         Write-Host "Creating directory: $path"
+
         New-Item -ItemType Directory -Path $path -Force
+
     }
+
 }
 
 # Function to create symlink
@@ -17,6 +22,7 @@ function Create-Symlink {
     if (-not (Test-Path $linkPath)) {
 
         Write-Host "Creating symlink: $linkPath -> $targetPath"
+
         New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath
 
     } else {
@@ -24,6 +30,7 @@ function Create-Symlink {
         Write-Host "Symlink already exists: $linkPath"
 
     }
+
 }
 
 # Iterate through each subfolder of the root directory
@@ -51,15 +58,21 @@ Get-ChildItem -Path $rootDir -Recurse -Directory | ForEach-Object {
                 if ($parts.Count -eq 2) {
 
                     $sourceFile = $parts[0]
-                    $symlinkPath = $parts[1]
+                    $symlinkPathUnresolved = $parts[1]
+
+                    $symlinkPath = Invoke-Expression "`"$symlinkPathUnresolved`""
 
                     # Resolve the absolute path of the source file
                     $targetFilePath = Join-Path -Path $folder -ChildPath $sourceFile
+
+                    Write-Host $targetFilePath
 
                     if (Test-Path $targetFilePath) {
 
                         # Ensure the parent directory of the symlink exists
                         $symlinkDir = Split-Path -Path $symlinkPath -Parent
+
+                        Write-Host $symlinkDir
 
                         Ensure-DirectoryExists -path $symlinkDir
 
