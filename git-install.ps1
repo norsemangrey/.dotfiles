@@ -1,3 +1,5 @@
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 # Check if Git is installed
 function IsGitInstalled {
 
