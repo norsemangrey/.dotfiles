@@ -19,17 +19,35 @@ function Ensure-DirectoryExists {
 function Create-Symlink {
     param([string]$linkPath, [string]$targetPath)
 
-    if (-not (Test-Path $linkPath)) {
+    # Check if the linkPath exists
+    if (Test-Path $linkPath) {
 
-        Write-Host "Creating symlink: $linkPath -> $targetPath"
+        # Get the item at linkPath
+        $item = Get-Item $linkPath -Force
 
-        New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath
+        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
 
-    } else {
+            # It is a symbolic link
+            Write-Host "Symlink already exists: $linkPath"
 
-        Write-Host "Symlink already exists: $linkPath"
+            return  # Exit the function since the symlink already exists
+
+        } else {
+
+            # It is not a symbolic link (regular file or directory)
+            Write-Host "A file or directory exists at $linkPath and is not a symlink. Deleting it."
+
+            Remove-Item -Path $linkPath -Force -Recurse
+
+            Write-Host "Deleted: $linkPath"
+        }
 
     }
+
+    # If we reach here, either the path didn't exist, or it was deleted. Create the symlink.
+    Write-Host "Creating symlink: $linkPath -> $targetPath"
+
+    New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath
 
 }
 
