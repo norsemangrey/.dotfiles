@@ -1,6 +1,6 @@
-NOTE: CURRENTLY NOT FUNCTIONING --- WORK IN PROGRESS
+TODO: Move git install script to separate repo.
 
-Run with:
+Run (as admin) with:
 `Invoke-Expression (Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/norsemangrey/.dotfiles/master/git-install.ps1')`
 
 Creating symlinks manually:
