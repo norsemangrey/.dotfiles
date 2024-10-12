@@ -88,6 +88,6 @@ $installedVersion
 #Invoke-Expression (Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/norsemangrey/.dotfiles/master/git-install.ps1')
 git clone https://github.com/norsemangrey/.dotfiles.git
 
-cd ./dotfiles
+cd ./.dotfiles
 
 . ./install.ps1
