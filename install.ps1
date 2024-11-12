@@ -1,4 +1,31 @@
 
+<#
+.SYNOPSIS
+Install and manage symlinks for configuration files in a Windows development environment.
+
+.DESCRIPTION
+This script reads environment variables from a .env file and creates symbolic links for
+configuration files based on paths specified in each subfolder's "paths.txt" file.
+Symbolic links allow the configurations to be used without copying files directly,
+facilitating easy updates and management.
+
+.PARAMETER dryRun
+When set to $true, performs a dry run without making any actual changes.
+
+.PARAMETER debug
+When set to $true, outputs additional debug information for each operation.
+
+.EXAMPLE
+.\install.ps1 -dryRun $true -debug $true
+Performs a dry run with debug information enabled.
+
+.EXAMPLE
+.\install.ps1 -dryRun $false
+Executes the script, creating symlinks as specified in the configuration files.
+
+.NOTES
+#>
+
 param (
     [bool] $dryRun = $true,
     [bool] $debug = $true
@@ -10,6 +37,7 @@ $modulePath = "./utils/logging-and-output-functions.psm1"
 
 # Import the module
 Import-Module $modulePath
+
 
 function Read-AndSetEnvironmentVariables {
 

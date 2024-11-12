@@ -1,38 +1,83 @@
-TODO: Move git-install script to separate repo.
+This repository provides configuration files and scripts for setting up symlinks in a Windows development environment. The install.ps1 script will generate symbolic links to connect various configuration files to their respective target locations, including any sensitive configuration files stored in cloud providers.
 
-This repo is for configuration files for my Windows development environment and the install script will create symlink paths to the applicable locations for various programs and modules.
+## Installation
 
-Sensitive files located in cloud providers and linked from there. Only symlink path are located in repo folders for these files.
+### Prerequisites
 
-Paths to cloud directories are specified in the .env file and these variables can then be used in the paths files for the applicable software sensitive config files.
+1. **Git:** If Git is not installed, you can install it using the `git-install.ps1` script:
 
-Run (as admin) with:
+    ```powershell
+    Invoke-Expression (Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/norsemangrey/.dotfiles/master/git-install.ps1')
+    ```
 
-```
-`Invoke-Expression (Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/norsemangrey/.dotfiles/master/git-install.ps1')`
-```
+    This command installs Git, clones the repository, and executes the script automatically.
 
-...this will install Git and clone the repo and run the script
+2. **Git Already Installed:** Clone this repository and ensure submodules are initialized:
 
-With Git already installed:
+    ```powershell
+    git clone --recurse-submodules https://github.com/norsemangrey/.dotfiles.git
+    Set-Location ./.dotfiles
+    . ./install.ps1 -dryRun $true -debug $true
+    ```
+    >Note: The `-dryRun` flag is set to `$true` by default. To apply actual changes, set it to `$false` (see Usage).
 
-```
-git clone --recurse-submodules https://github.com/norsemangrey/.dotfiles.git
-Set-Location ./.dotfiles
-. ./install.ps1 -dryRun $true -debug $true
-```
+## Usage
 
-To update:
-```
-Set-Location $Env:USERPROFILE/.dotfiles
-git pull
-. ./install.ps1 -dryRun $true -debug $true
-```
+### Running the Script
 
-Creating symlinks manually:
+1. **Basic Execution:** Run the script with:
 
-CMD:
-```mklink <target-path> <link-path>```
+    ```powershell
+    . ./install.ps1 -dryRun $true -debug $true
+    ```
+   - `-dryRun`: Set this to `$false` to apply the symlink changes, replacing existing files in the specified locations.
+   - `-debug`: Toggle debug output for more detailed logging.
 
-PowerShell:
-```New-Item -ItemType SymbolicLink -Path <link-path> -Target <target-path>```
+2. **Updating Symlinks:** To pull the latest changes and re-run the script:
+
+    ```powershell
+    Set-Location $Env:USERPROFILE/.dotfiles
+    git pull
+    . ./install.ps1 -dryRun $true -debug $true
+    ```
+    >WARNING: When `-dryRun` is set to `$false`, any existing files at the symlink target paths will be replaced, and their original content may be lost.
+
+### Manually Creating Symlinks
+
+To create symbolic links manually, use:
+
+- **CMD**:
+
+    ```cmd
+    mklink <target-path> <link-path>
+    ```
+- **PowerShell**:
+
+    ```powershell
+    New-Item -ItemType SymbolicLink -Path <link-path> -Target <target-path>
+    ```
+
+### Structure and Configuration
+
+- **Environment Variables**:
+
+  - Configuration paths are stored in a .env file.
+  - The script reads these paths to create symlinks in the appropriate directories.
+
+- **Sensitive Files**:
+
+  - Sensitive configurations, such as API keys or private credentials, are stored in a cloud directory and linked by the script.
+  - Only the symlink paths are stored in this repository for security.
+
+#### Directory Structure
+
+- **Root Directory**: Contains the primary script (`install.ps1`) and subfolders for different configurations.
+- **utils/**: Contains auxiliary scripts, such as `logging-and-output-functions.psm1`, used for logging and message output.
+
+## Notes
+
+- **TODO**: The following improvements are planned:
+
+  - Relocate git-install script to a separate repository.
+  - Update the script name from install.ps1 to something more descriptive.
+  - Complete initial configurations for all supported applications.
