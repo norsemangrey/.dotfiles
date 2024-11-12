@@ -1,0 +1,1 @@
+$Env:DOTFILES_WORK\npm\npm-config.work $Env:USERPROFILE\.npmrc

@@ -87,6 +87,6 @@ $installedVersion
 
 git clone https://github.com/norsemangrey/.dotfiles.git
 
-cd ./.dotfiles
+Set-Location ./.dotfiles
 
 . ./install.ps1

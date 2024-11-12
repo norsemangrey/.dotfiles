@@ -1,0 +1,8 @@
+Include config.work
+Include config.home
+
+Host *
+  IdentitiesOnly yes
+  HashKnownHosts = yes
+  ServerAliveInterval 60
+  ServerAliveCountMax 10

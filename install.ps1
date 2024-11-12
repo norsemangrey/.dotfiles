@@ -1,13 +1,165 @@
-# Get the root folder where the script is located
-$rootDir = (Get-Location)
+# Path to the logger module file
+$modulePath = "./utils/logging-and-output-functions.psm1"
 
-# Function to create directories if they don't exist
-function Ensure-DirectoryExists {
-    param([string]$path)
+# Import the module
+Import-Module $modulePath
+
+function Read-AndSetEnvironmentVariables {
+
+    # Define the path to your .env file
+    $envFilePath = ".env"
+
+    # Check if the .env file exists
+    if (Test-Path -Path $envFilePath) {
+
+        # Read each line in the .env file
+        Get-Content -Path $envFilePath | ForEach-Object {
+
+            $line = $_.Trim()
+
+            # Ignore empty lines or lines that start with #
+            if ($line -and -not $line.StartsWith("#")) {
+
+                # Split at the first "=" to get the key and value
+                $key, $value = $line -split "=", 2
+                $key = $key.Trim()
+                $value = $value.Trim()
+
+                # Expand if any Environment paths
+                $expandedValue = Invoke-Expression -Command "`"$value`""
+
+                # Set the environment variable (PowerShell will automatically expand $Env: variables)
+                [System.Environment]::SetEnvironmentVariable($key, $expandedValue, "Process")
+
+            }
+        }
+
+    } else {
+
+        Write-Message "Environment variables (.env) file not found!" "WARNING"
+
+    }
+
+}
+
+
+function Test-ForEnvironmentVariable {
+    param(
+        [string] $path
+    )
+
+    # Regular expression pattern to match $Env:<variable>
+    $pattern = '\$Env:([a-zA-Z_][\w]*)|%([a-zA-Z_][\w]*)%'
+
+    # Replace all occurrences of environment variables in the path
+    if ( $path -match $pattern ) {
+
+        # Determine if it's a $Env: or %...% format and retrieve the variable name
+        $envVariable = if ($matches[1]) { $matches[1] } else { $matches[2] }
+
+        # Check if the environment variable is set
+        $envValue = [System.Environment]::GetEnvironmentVariable($envVariable)
+
+        # If the environment variable is not defined, return $null for the function
+        if (-not $envValue) {
+
+            Write-Message "Environment variable '$envVariable' is not set" "WARNING"
+
+            return $null
+
+        } else {
+
+            $resolvedPath = $path -replace $pattern, $envValue
+
+            return $resolvedPath
+
+        }
+
+    } else {
+
+        return $path
+
+    }
+
+}
+
+
+function Test-ForAbsolutePath {
+    param (
+        [string]$path,
+        [string]$baseFolder  # Optional base folder for relative paths
+    )
+
+    # Regex pattern to match a Windows drive letter path, e.g., "C:\" or "D:\"
+    $driveLetterPattern = '^[a-zA-Z]:\\'
+
+    # Check if the path is absolute
+    if ($path -match $driveLetterPattern) {
+
+        # Absolute path, return it as is without checking existence
+        return [System.IO.Path]::GetFullPath($path)
+
+    } else {
+
+        # Relative path: resolve it against the base folder or current directory
+        $resolvedPath = if ($baseFolder) {
+
+            Join-Path -Path $baseFolder -ChildPath $path
+
+        } else {
+
+            Join-Path -Path (Get-Location) -ChildPath $path
+
+        }
+
+        # Check if the resolved relative path exists
+        if (Test-Path -Path $resolvedPath) {
+
+            return [System.IO.Path]::GetFullPath($resolvedPath)
+
+        } else {
+
+            Write-Message "Path must exist if relative (i.e. targe path): '$path'." "WARNING"
+
+            # Path does not exist; return null
+            return $null
+
+        }
+
+    }
+
+}
+
+
+function Test-AndResolvePath {
+    param (
+        [string] $path,
+        [string] $baseFolder
+    )
+
+    Write-Message "Verifying and resolving path ($path)..." "DEBUG"
+
+    if ( $resolvedPath = Test-ForEnvironmentVariable $path ) {
+
+        return Test-ForAbsolutePath $resolvedPath $baseFolder
+
+    } else {
+
+        return $null
+
+    }
+
+}
+
+
+function New-DirectoryIfMissing {
+    param(
+        [string]$path
+    )
 
     if (-not (Test-Path -Path $path)) {
 
-        Write-Host "Creating directory: $path"
+        Write-Host "Creating symlink parent directory ($path)..." "DEBUG"
 
         New-Item -ItemType Directory -Path $path -Force
 
@@ -15,9 +167,12 @@ function Ensure-DirectoryExists {
 
 }
 
-# Function to create symlink
-function Create-Symlink {
-    param([string]$linkPath, [string]$targetPath)
+
+function New-Symlink {
+    param(
+        [string] $linkPath,
+        [string] $targetPath
+    )
 
     # Check if the linkPath exists
     if (Test-Path $linkPath) {
@@ -25,89 +180,114 @@ function Create-Symlink {
         # Get the item at linkPath
         $item = Get-Item $linkPath -Force
 
+        # Check if file is a symlink
         if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
 
-            # It is a symbolic link
-            Write-Host "Symlink already exists: $linkPath"
+            # It is a symbolic link, so get the current target of the symlink
+            $currentTarget = (Get-Item -Path $linkPath -Force).Target
 
-            return  # Exit the function since the symlink already exists
+            # Check if current target path is same as target from file
+            if ($currentTarget -eq $targetPath) {
+
+                Write-Message "Symlink already exists and points to the correct target ($targetPath)" "INFO"
+
+                # Exit the function as the symlink is already correct
+                return
+
+            } else {
+
+                Write-Message "Symlink exists, but points to a different target ($currentTarget). Recreating..." "INFO"
+
+                # Remove the incorrect symlink
+                if ( -not $dryRun ) { Remove-Item -Path $linkPath -Force }
+            }
 
         } else {
 
             # It is not a symbolic link (regular file or directory)
-            Write-Host "A file or directory exists at $linkPath and is not a symlink. Deleting it."
+            Write-Message "A file or directory exists in the symlink path ($linkPath) and is not a symlink. Replacing..." "INFO"
 
-            Remove-Item -Path $linkPath -Force -Recurse
+            if ( -not $dryRun ) { Remove-Item -Path $linkPath -Force -Recurse }
 
-            Write-Host "Deleted: $linkPath"
         }
 
     }
 
     # If we reach here, either the path didn't exist, or it was deleted. Create the symlink.
-    Write-Host "Creating symlink: $linkPath -> $targetPath"
+    Write-Message "Creating new symlink: $linkPath -> $targetPath" "INFO"
 
-    New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath
+    # Create new symlink
+    if ( -not $dryRun ) { New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath }
 
 }
 
+
+$dryRun = $true
+$debug = $true
+
+Read-AndSetEnvironmentVariables
+
 # Iterate through each subfolder of the root directory
-Get-ChildItem -Path $rootDir -Recurse -Directory | ForEach-Object {
+Get-ChildItem -Path $(Get-Location) -Recurse -Directory | ForEach-Object {
 
     $folder = $_.FullName
 
     # Check if paths.txt exists in the folder
     $pathsFile = Join-Path -Path $folder -ChildPath "paths.txt"
 
+    # Check if paths file exists
     if (Test-Path $pathsFile) {
 
-        Write-Host "Processing paths.txt in $folder"
+        Write-Message "Processing symlink paths for '$folder'..." "INFO"
 
         # Read each line from the paths.txt
         Get-Content -Path $pathsFile | ForEach-Object {
 
+            Write-Message "Processing new line ($_)" "DEBUG"
+
+            # Get and trim new line
             $line = $_.Trim()
 
-            if ($line -and $line -notlike "#*") {
+            # Check if not comment
+            if ($line -and $line -notLike "#*") {
 
                 # Split the line into source file and symlink path
                 $parts = $line -split "\s+", 2
 
+                # Check if two strings / paths
                 if ($parts.Count -eq 2) {
 
-                    $sourceFile = $parts[0]
-                    $symlinkPathUnresolved = $parts[1]
+                    # Verify paths and resolve to full path
+                    $targetPath = Test-AndResolvePath $parts[0] $folder
+                    $symlinkPath  = Test-AndResolvePath $parts[1] $folder
 
-                    $symlinkPath = Invoke-Expression "`"$symlinkPathUnresolved`""
-
-                    # Resolve the absolute path of the source file
-                    $targetFilePath = Join-Path -Path $folder -ChildPath $sourceFile
-
-                    Write-Host $targetFilePath
-
-                    if (Test-Path $targetFilePath) {
+                    if ( $targetPath -and $symlinkPath) {
 
                         # Ensure the parent directory of the symlink exists
                         $symlinkDir = Split-Path -Path $symlinkPath -Parent
 
-                        Write-Host $symlinkDir
-
-                        Ensure-DirectoryExists -path $symlinkDir
+                        # Create symlink parent directories if they don't exist
+                        New-DirectoryIfMissing -path $symlinkDir
 
                         # Create the symlink
-                        Create-Symlink -linkPath $symlinkPath -targetPath $targetFilePath
+                        New-Symlink -linkPath $symlinkPath -targetPath $targetPath
 
                     } else {
 
-                        Write-Host "Source file not found: $targetFilePath"
+                        Write-Message "Issues with either target file path or symlink path." "ERROR"
 
                     }
+
                 } else {
 
-                    Write-Host "Invalid line format in paths.txt: $line"
+                    Write-Message "Invalid line format in paths file. Entry must contain space separated target and symlink path." "ERROR"
 
                 }
+
             }
+
         }
+
     }
+
 }
