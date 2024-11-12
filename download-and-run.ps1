@@ -1,6 +1,6 @@
 $githubUsername = "norsemangrey"
 $repositoryName = ".dotfiles"
-$branchName = "main"
+$branchName = "master"
 $scriptFilePath = "install.ps1"
 
 # URL to download the entire repository as a ZIP file
