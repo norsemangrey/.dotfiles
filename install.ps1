@@ -1,3 +1,10 @@
+
+param (
+    [bool] $dryRun = $true,
+    [bool] $debug = $true
+)
+
+
 # Path to the logger module file
 $modulePath = "./utils/logging-and-output-functions.psm1"
 
@@ -222,65 +229,65 @@ function New-Symlink {
 }
 
 
-$dryRun = $true
-$debug = $true
+function Update-Symlinks {
 
-Read-AndSetEnvironmentVariables
+    # Iterate through each subfolder of the root directory
+    Get-ChildItem -Path $(Get-Location) -Recurse -Directory | ForEach-Object {
 
-# Iterate through each subfolder of the root directory
-Get-ChildItem -Path $(Get-Location) -Recurse -Directory | ForEach-Object {
+        $folder = $_.FullName
+        $folderName = $_.Name
 
-    $folder = $_.FullName
+        # Check if paths.txt exists in the folder
+        $pathsFile = Join-Path -Path $folder -ChildPath "paths.txt"
 
-    # Check if paths.txt exists in the folder
-    $pathsFile = Join-Path -Path $folder -ChildPath "paths.txt"
+        # Check if paths file exists
+        if (Test-Path $pathsFile) {
 
-    # Check if paths file exists
-    if (Test-Path $pathsFile) {
+            Write-Message "Processing symlink paths for '$folderName'..." "INFO"
 
-        Write-Message "Processing symlink paths for '$folder'..." "INFO"
+            # Read each line from the paths.txt
+            Get-Content -Path $pathsFile | ForEach-Object {
 
-        # Read each line from the paths.txt
-        Get-Content -Path $pathsFile | ForEach-Object {
+                Write-Message "Processing new line ($_)" "DEBUG"
 
-            Write-Message "Processing new line ($_)" "DEBUG"
+                # Get and trim new line
+                $line = $_.Trim()
 
-            # Get and trim new line
-            $line = $_.Trim()
+                # Check if not comment
+                if ($line -and $line -notLike "#*") {
 
-            # Check if not comment
-            if ($line -and $line -notLike "#*") {
+                    # Split the line into source file and symlink path
+                    $parts = $line -split "\s+", 2
 
-                # Split the line into source file and symlink path
-                $parts = $line -split "\s+", 2
+                    # Check if two strings / paths
+                    if ($parts.Count -eq 2) {
 
-                # Check if two strings / paths
-                if ($parts.Count -eq 2) {
+                        # Verify paths and resolve to full path
+                        $targetPath = Test-AndResolvePath $parts[0] $folder
+                        $symlinkPath  = Test-AndResolvePath $parts[1] $folder
 
-                    # Verify paths and resolve to full path
-                    $targetPath = Test-AndResolvePath $parts[0] $folder
-                    $symlinkPath  = Test-AndResolvePath $parts[1] $folder
+                        if ( $targetPath -and $symlinkPath) {
 
-                    if ( $targetPath -and $symlinkPath) {
+                            # Ensure the parent directory of the symlink exists
+                            $symlinkDir = Split-Path -Path $symlinkPath -Parent
 
-                        # Ensure the parent directory of the symlink exists
-                        $symlinkDir = Split-Path -Path $symlinkPath -Parent
+                            # Create symlink parent directories if they don't exist
+                            New-DirectoryIfMissing -path $symlinkDir
 
-                        # Create symlink parent directories if they don't exist
-                        New-DirectoryIfMissing -path $symlinkDir
+                            # Create the symlink
+                            New-Symlink -linkPath $symlinkPath -targetPath $targetPath
 
-                        # Create the symlink
-                        New-Symlink -linkPath $symlinkPath -targetPath $targetPath
+                        } else {
+
+                            Write-Message "Issues with either target file path or symlink path." "ERROR"
+
+                        }
 
                     } else {
 
-                        Write-Message "Issues with either target file path or symlink path." "ERROR"
+                        Write-Message "Invalid line format in paths file. Entry must contain space separated target and symlink path." "ERROR"
 
                     }
-
-                } else {
-
-                    Write-Message "Invalid line format in paths file. Entry must contain space separated target and symlink path." "ERROR"
 
                 }
 
@@ -291,3 +298,7 @@ Get-ChildItem -Path $(Get-Location) -Recurse -Directory | ForEach-Object {
     }
 
 }
+
+Read-AndSetEnvironmentVariables
+
+Update-Symlinks
