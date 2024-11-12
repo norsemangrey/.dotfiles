@@ -11,7 +11,7 @@ Run (as admin) with:
 With Git already installed:
 
 ```
-git clone https://github.com/norsemangrey/.dotfiles.git
+git clone --recurse-submodules https://github.com/norsemangrey/.dotfiles.git
 Set-Location ./.dotfiles
 . ./install.ps1 -dryRun $true -debug $true
 ```
