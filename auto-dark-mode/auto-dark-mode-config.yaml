@@ -1,0 +1,136 @@
+AutoThemeSwitchingEnabled: false
+Governor: Default
+Autostart:
+  Validate: true
+WindowsThemeMode:
+  Enabled: false
+  DarkThemePath:
+  LightThemePath:
+  MonitorActiveTheme: false
+  ApplyFlags: []
+AppsSwitch:
+  Enabled: true
+  Component:
+    Mode: Switch
+SystemSwitch:
+  Enabled: true
+  Component:
+    Mode: Switch
+    TaskbarSwitchDelay: 1200
+    TaskbarColorOnAdaptive: false
+    TaskbarColorWhenNonAdaptive: Light
+    DWMPrevalenceSwitch: false
+    DWMPrevalenceEnableTheme: Light
+TouchKeyboardSwitch:
+  Enabled: false
+  Component: {}
+ColorizationSwitch:
+  Enabled: true
+  Component:
+    LightHex: '#FF258292'
+    DarkHex: '#FF258292'
+    LightAutoColorization: false
+    DarkAutoColorization: false
+ColorFilterSwitch:
+  Enabled: false
+  Component: {}
+OfficeSwitch:
+  Enabled: false
+  Component:
+    Mode: Switch
+    LightTheme: 0
+    DarkTheme: 4
+CursorSwitch:
+  Enabled: false
+  Component:
+    CursorsLight:
+    CursorsDark:
+Sunrise: 2023-11-16T07:00:00.0000000
+Sunset: 2023-11-16T20:00:00.0000000
+Location:
+  PollingCooldownTimeSpan: 1.00:00:00
+  Enabled: false
+  UseGeolocatorService: true
+  SunsetOffsetMin: 0
+  SunriseOffsetMin: 0
+  CustomLat: 0
+  CustomLon: 0
+Tunable:
+  BatterySliderDefaultValue: 25
+  DisableEnergySaverOnThemeSwitch: false
+  UseLogonTask: false
+  Debug: false
+  Trace: false
+  DebugTimerMessage: false
+  ShowTrayIcon: true
+  AlwaysFullDwmRefresh: false
+  UICulture: en
+GPUMonitoring:
+  Enabled: false
+  Threshold: 30
+  Samples: 1
+ProcessBlockList:
+  ProcessNames: []
+  Enabled: false
+Events:
+  DarkThemeOnBattery: false
+  Win10AllowLockscreenSwitch: false
+Notifications:
+  OnAutoThemeSwitching: true
+  OnSkipNextSwitch: true
+AutoSwitchNotify:
+  Enabled: true
+  GracePeriodMinutes: 5
+Hotkeys:
+  Enabled: false
+  ForceLight:
+  ForceDark:
+  NoForce:
+  ToggleTheme:
+  TogglePostpone:
+  ToggleAutoThemeSwitch:
+IdleChecker:
+  Enabled: false
+  Threshold: 5
+WallpaperSwitch:
+  Enabled: true
+  Component:
+    TypeLight: Individual
+    TypeDark: Individual
+    Position: Fill
+    GlobalWallpaper:
+      Light:
+      Dark:
+    SolidColors:
+      Light: '#FFFFFF'
+      Dark: '#000000'
+    Monitors:
+    - Id: '\\?\DISPLAY#HPN3485#5&36fd9695&0&UID4613#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}'
+      LightThemeWallpaper: C:\Windows\Web\Wallpaper\ThemeC\img29.jpg
+      DarkThemeWallpaper: C:\Windows\Web\Wallpaper\ThemeB\img25.jpg
+    - Id: '\\?\DISPLAY#HPN3485#5&36fd9695&0&UID4612#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}'
+      LightThemeWallpaper: C:\Windows\Web\Wallpaper\ThemeC\img29.jpg
+      DarkThemeWallpaper: C:\Windows\Web\Wallpaper\ThemeB\img26.jpg
+    - Id: '\\?\DISPLAY#HPN3485#5&36fd9695&0&UID4614#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}'
+      LightThemeWallpaper: C:\Windows\Web\Wallpaper\ThemeC\img30.jpg
+      DarkThemeWallpaper: C:\Windows\Web\Wallpaper\ThemeB\img27.jpg
+    - Id: '\\?\DISPLAY#AUO24ED#4&e0c643f&0&UID265988#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}'
+      LightThemeWallpaper: C:\Windows\Web\Wallpaper\ThemeC\img31.jpg
+      DarkThemeWallpaper: C:\Windows\Web\Wallpaper\ThemeB\img24.jpg
+    - Id: '\\?\DISPLAY#HPN36CE#5&36fd9695&0&UID4614#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}'
+      LightThemeWallpaper: USERPROFILE\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets\86dd21897471ba200c1f5a260d66ba9f4f79688d59f13324857eabedefe93b97
+      DarkThemeWallpaper: USERPROFILE\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets\86dd21897471ba200c1f5a260d66ba9f4f79688d59f13324857eabedefe93b97
+    - Id: '\\?\DISPLAY#HPN36CE#5&36fd9695&0&UID4616#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}'
+      LightThemeWallpaper: USERPROFILE\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets\86dd21897471ba200c1f5a260d66ba9f4f79688d59f13324857eabedefe93b97
+      DarkThemeWallpaper: USERPROFILE\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets\86dd21897471ba200c1f5a260d66ba9f4f79688d59f13324857eabedefe93b97
+Updater:
+  AutoInstall: false
+  Enabled: true
+  Silent: false
+  DaysBetweenUpdateCheck: 1
+  CheckOnStart: true
+  VersionQueryUrl:
+  DownloadBaseUrl:
+  ZipCustomUrl:
+  HashCustomUrl:
+

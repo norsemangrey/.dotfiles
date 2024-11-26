@@ -1,0 +1,1 @@
+auto-dark-mode-config.json $Env:APPDATA\AutoDarkMode\config.json
