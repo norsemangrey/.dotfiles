@@ -1,1 +1,1 @@
-$Env:DOTFILES_CLOUD\winscp\winscp-config.ini $Env:USERPROFILE\.config\winscp\WinSCP.ini
+w $Env:DOTFILES_CLOUD\winscp\winscp-config.ini $Env:USERPROFILE\.config\winscp\WinSCP.ini

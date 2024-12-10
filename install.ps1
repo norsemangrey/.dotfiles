@@ -281,18 +281,18 @@ function Update-Symlinks {
                 # Get and trim new line
                 $line = $_.Trim()
 
-                # Check if not comment
-                if ($line -and $line -notLike "#*") {
+                # Check if line has content and starts with a "w" for "Windows"
+                if ( $line -and $line.StartsWith("w") ) {
 
                     # Split the line into source file and symlink path
-                    $parts = $line -split "\s+", 2
+                    $parts = $line -split "\s+", 3
 
                     # Check if two strings / paths
-                    if ($parts.Count -eq 2) {
+                    if ($parts.Count -eq 3) {
 
                         # Verify paths and resolve to full path
-                        $targetPath = Test-AndResolvePath $parts[0] $folder
-                        $symlinkPath  = Test-AndResolvePath $parts[1] $folder
+                        $targetPath = Test-AndResolvePath $parts[1] $folder
+                        $symlinkPath  = Test-AndResolvePath $parts[2] $folder
 
                         if ( $targetPath -and $symlinkPath) {
 
@@ -313,7 +313,7 @@ function Update-Symlinks {
 
                     } else {
 
-                        Write-Message "Invalid line format in paths file. Entry must contain space separated target and symlink path." "ERROR"
+                        Write-Message "Invalid line format in paths file. Entry must contain space separated system (w/l), target- and symlink path." "ERROR"
 
                     }
 
