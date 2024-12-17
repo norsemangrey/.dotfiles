@@ -185,15 +185,41 @@ function pkill($name) {
 }
 
 # Function to mimic the OpenSSH function top copy public keys found on Linux
-function ssh-copy-id([string] $sshHost) {
+function ssh-copy-id([string]$sshHost) {
+
+    # Check if the host argument is provided
+    if (-not $sshHost) {
+
+        Write-Host "Error: You must provide a target host. Usage: ssh-copy-id <username>@<server_ip>"
+        return
+
+    }
+
+    # Verify if the SSH host is reachable by attempting to ping (optional step)
+    try {
+
+        $pingResult = Test-Connection -ComputerName $sshHost -Count 1 -Quiet
+
+        if (-not $pingResult) {
+
+            Write-Host "Error: Unable to reach the SSH host ($sshHost). Please check the host address or network connectivity."
+            return
+
+        }
+
+    } catch {
+
+        Write-Host "Error: Unable to ping the host. Please check the host address or network connectivity."
+        return
+
+    }
 
     # Find the first .pub file in the user's .ssh directory
     $publicKeyFile = Get-ChildItem "$env:USERPROFILE\.ssh\keys" -Filter "*.pub" | Select-Object -First 1
 
-    # Check if found
     if ($null -eq $publicKeyFile) {
 
-        Write-Host "No public key found in ~/.ssh/keys directory. Please generate an SSH key pair first."
+        Write-Host "Error: No public key found in ~/.ssh/keys directory. Please generate an SSH key pair first."
         return
 
     }
@@ -202,10 +228,19 @@ function ssh-copy-id([string] $sshHost) {
     $publicKey = Get-Content $publicKeyFile.FullName
 
     # Use SSH to copy the public key to the remote server's authorized_keys file
-    $command = "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod -R go= ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys"
-    ssh "$sshHost" $command
+    try {
 
-    Write-Host "Public key copied to $sshHost successfully."
+        $command = "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod -R go= ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys"
+
+        ssh "$sshHost" $command
+
+        Write-Host "Public key copied to $sshHost successfully."
+
+    } catch {
+
+        Write-Host "Error: Failed to copy the public key to $sshHost. Please ensure SSH is properly set up on the server."
+
+    }
 
 }
 
