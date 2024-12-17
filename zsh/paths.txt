@@ -1,1 +1,1 @@
-l zsh-config $HOME/.config/zsf/.zshrc
+l zsh-config $HOME/.config/zsh/.zshrc

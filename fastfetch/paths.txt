@@ -2,4 +2,4 @@ w fastfetch-windows-config.jsonc $Env:USERPROFILE\.config\fastfetch\config.jsonc
 w fastfetch-ascii-woman.txt $Env:USERPROFILE\.config\fastfetch\ascii.txt
 
 l fastfetch-linux-config.jsonc $HOME/.config/fastfetch/config.jsonc
-l fastfetch-ascii-campfire.txt $HOME/.config/fastfetch\ascii.txt
+l fastfetch-ascii-campfire.txt $HOME/.config/fastfetch/ascii.txt

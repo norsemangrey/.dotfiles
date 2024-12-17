@@ -1,1 +1,3 @@
 w posh-custom-theme.omp.json $Env:USERPROFILE\AppData\Local\Programs\oh-my-posh\themes\posh-custom-theme.omp.json
+
+l posh-custom-theme.omp.json $HOME/.config/oh-my-posh/themes/posh-custom-theme.omp.json
