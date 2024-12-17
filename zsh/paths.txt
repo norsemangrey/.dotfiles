@@ -1,1 +1,2 @@
 l zsh-config $HOME/.config/zsh/.zshrc
+l zsh-envs $HOME/.zshenv
