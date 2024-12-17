@@ -184,6 +184,31 @@ function pkill($name) {
     Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
 }
 
+# Function to mimic the OpenSSH function top copy public keys found on Linux
+function ssh-copy-id([string] $sshHost) {
+
+    # Find the first .pub file in the user's .ssh directory
+    $publicKeyFile = Get-ChildItem "$env:USERPROFILE\.ssh\keys" -Filter "*.pub" | Select-Object -First 1
+
+    # Check if found
+    if ($null -eq $publicKeyFile) {
+
+        Write-Host "No public key found in ~/.ssh/keys directory. Please generate an SSH key pair first."
+        return
+
+    }
+
+    # Read the content of the public key
+    $publicKey = Get-Content $publicKeyFile.FullName
+
+    # Use SSH to copy the public key to the remote server's authorized_keys file
+    $command = "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod -R go= ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys"
+    ssh "$sshHost" $command
+
+    Write-Host "Public key copied to $sshHost successfully."
+
+}
+
 
 # Creates drive shortcut for Work Folders, if current user account is using it
 if (Test-Path "$env:USERPROFILE\Work Folders") {
