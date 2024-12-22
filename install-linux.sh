@@ -1,42 +1,71 @@
 #!/bin/bash
 
+# Set external logger- and error handling script paths
+externalLogger="./utils/bash/logging-and-output-function.sh"
+externalErrorHandler="./utils/bash/error-handling-function.sh"
+
+# Source external logger and error handler (but allow execution without them)
+source "${externalErrorHandler}" "Test script failed" || true
+source "${externalLogger}" || true
+
+# Verify if logger function exists or sett fallback
+if [[ $(type -t logMessage) != function ]]; then
+
+    # Fallback minimalistic logger function
+    logMessage() {
+
+        local level="${2:-INFO}"
+        echo "[$level] $1"
+
+    }
+
+fi
+
 # Set dotfiles directory and log file
 DOTFILES_DIR="$HOME/.dotfiles"
-LOG_FILE="$HOME/symlink_manager.log"
-
-# Clear log file at the start
-> "$LOG_FILE"
 
 # Function to expand environment variables in paths
-expand_path() {
+expandPath() {
     eval echo "$1"
 }
 
 # Find and process all paths.txt files in subdirectories
-find "$DOTFILES_DIR" -type f -name "paths.txt" | while IFS= read -r paths_file; do
-    app_dir=$(dirname "$paths_file")
-    echo "Processing $paths_file..." | tee -a "$LOG_FILE"
+find "$DOTFILES_DIR" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
+
+    # Set current app directory
+    appDirectory=$(dirname "$pathsFile")
+
+    logMessage "Processing ${pathsFile}..."
 
     # Process only lines starting with "l "
-    grep '^l' "$paths_file" | while IFS= read -r line; do
+    grep '^l' "${pathsFile}" | while IFS= read -r line; do
+
         # Extract source and target paths (remove the "l " prefix)
-        source_path=$(echo "$line" | awk '{print $2}')
-        target_path=$(echo "$line" | awk '{print $3}')
+        sourcePath=$(echo "$line" | awk '{print $2}')
+        targetPath=$(echo "$line" | awk '{print $3}')
 
         # Expand environment variables and resolve full paths
-        expanded_source=$(expand_path "$app_dir/$source_path")
-        expanded_target=$(expand_path "$target_path")
+        expandedSource=$(expandPath "${appDirectory}/${sourcePath}")
+        expandedTarget=$(expandPath "${targetPath}")
 
         # Create parent directory for target if necessary
-        mkdir -p "$(dirname "$expanded_target")"
+        mkdir -p "$(dirname "${expandedTarget}")"
 
         # Create symlink, handling existing files
-        if [[ -e "$expanded_target" || -L "$expanded_target" ]]; then
-            echo "Warning: $expanded_target exists. Skipping..." | tee -a "$LOG_FILE"
+        if [[ -e "${expandedTarget}" || -L "${expandedTarget}" ]]; then
+
+            logMessage "The target path (${expandedTarget}) exists. Skipping..."
+
         else
-            ln -s "$expanded_source" "$expanded_target" && echo "Linked $expanded_source -> $expanded_target" | tee -a "$LOG_FILE"
+
+            ln -s "${expandedSource}" "${expandedTarget}"
+
+            logMessage "Linked ${expandedSource} -> ${expandedTarget}"
+
         fi
+
     done
+
 done
 
-echo "Symlink creation completed. See $LOG_FILE for details."
+logMessage "Symlink creation completed."

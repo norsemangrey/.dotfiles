@@ -33,7 +33,7 @@ param (
 
 
 # Path to the logger module file
-$modulePath = "./utils/logging-and-output-functions.psm1"
+$modulePath = "./utils/powershell/logging-and-output-functions.psm1"
 
 # Import the module
 Import-Module $modulePath
