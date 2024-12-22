@@ -195,10 +195,13 @@ function ssh-copy-id([string]$sshHost) {
 
     }
 
+    # Extract the hostname or IP address from sshHost (before '@')
+    $hostname = $sshHost.Split('@')[1]
+
     # Verify if the SSH host is reachable by attempting to ping (optional step)
     try {
 
-        $pingResult = Test-Connection -ComputerName $sshHost -Count 1 -Quiet
+        $pingResult = Test-Connection -ComputerName $hostname -Count 1 -Quiet
 
         if (-not $pingResult) {
 
