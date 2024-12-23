@@ -5,7 +5,7 @@ externalLogger="./utils/bash/logging-and-output-function.sh"
 externalErrorHandler="./utils/bash/error-handling-function.sh"
 
 # Source external logger and error handler (but allow execution without them)
-source "${externalErrorHandler}" "Test script failed" || true
+source "${externalErrorHandler}" "Dotfiles scrip failed" || true
 source "${externalLogger}" || true
 
 # Verify if logger function exists or sett fallback
@@ -35,7 +35,7 @@ find "$DOTFILES_DIR" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
     # Set current app directory
     appDirectory=$(dirname "$pathsFile")
 
-    logMessage "Processing ${pathsFile}..."
+    logMessage "Processing ${pathsFile}..." "INFO"
 
     # Process only lines starting with "l "
     grep '^l' "${pathsFile}" | while IFS= read -r line; do
@@ -54,13 +54,13 @@ find "$DOTFILES_DIR" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
         # Create symlink, handling existing files
         if [[ -e "${expandedTarget}" || -L "${expandedTarget}" ]]; then
 
-            logMessage "The target path (${expandedTarget}) exists. Skipping..."
+            logMessage "The target path (${expandedTarget}) exists. Skipping..." "DEBUG"
 
         else
 
             ln -s "${expandedSource}" "${expandedTarget}"
 
-            logMessage "Linked ${expandedSource} -> ${expandedTarget}"
+            logMessage "Linked ${expandedSource} -> ${expandedTarget}" "INFO"
 
         fi
 
@@ -68,4 +68,4 @@ find "$DOTFILES_DIR" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
 
 done
 
-logMessage "Symlink creation completed."
+logMessage "Symlink creation completed." "INFO"
