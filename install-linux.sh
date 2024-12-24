@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Set external logger- and error handling script paths
-externalLogger="./utils/bash/logging-and-output-function.sh"
-externalErrorHandler="./utils/bash/error-handling-function.sh"
+# Getting absolute path as script might be called from another script
+externalLogger=$(dirname "${BASH_SOURCE[0]}")"/utils/bash/logging-and-output-function.sh"
+externalErrorHandler=$(dirname "${BASH_SOURCE[0]}")"/utils/bash/error-handling-function.sh"
 
 # Source external logger and error handler (but allow execution without them)
 source "${externalErrorHandler}" "Dotfiles scrip failed" || true
