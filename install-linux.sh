@@ -10,7 +10,10 @@ usage() {
     echo "  -v, --verbose           Shows standards output from commands."
     echo "  -h, --help              Show this help message and exit."
     echo ""
-    echo "TODO: Create usage information."
+    echo "This script reads environment variables from a .env file and creates symbolic links for"
+    echo "configuration files based on paths specified in each subfolder's "paths.txt" file."
+    echo "Symbolic links allow the configurations to be used without copying files directly,"
+    echo "facilitating easy updates and management using Git."
     echo ""
 }
 
@@ -75,7 +78,7 @@ run() {
 }
 
 # Set dotfiles directory and log file
-DOTFILES_DIR="$HOME/.dotfiles"
+dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
 
 # Function to expand environment variables in paths
 expandPath() {
@@ -83,7 +86,7 @@ expandPath() {
 }
 
 # Find and process all paths.txt files in subdirectories
-find "$DOTFILES_DIR" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
+find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
 
     # Set current app directory
     appDirectory=$(dirname "$pathsFile")
