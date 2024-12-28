@@ -1,5 +1,42 @@
 #!/bin/bash
 
+# Usage function.
+usage() {
+    echo ""
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  -d, --debug             Turns on debug output messages."
+    echo "  -v, --verbose           Shows standards output from commands."
+    echo "  -h, --help              Show this help message and exit."
+    echo ""
+    echo "TODO: Create usage information."
+    echo ""
+}
+
+# Parsed from command line arguments.
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -d|--debug)
+            debug=true
+            shift
+            ;;
+        -v|--verbose)
+            verbose=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "Invalid option: $1" >&2
+            usage
+            exit 1
+            ;;
+    esac
+done
+
 # Set external logger- and error handling script paths
 # Getting absolute path as script might be called from another script
 externalLogger=$(dirname "${BASH_SOURCE[0]}")"/utils/bash/logging-and-output-function.sh"
@@ -21,6 +58,21 @@ if [[ $(type -t logMessage) != function ]]; then
     }
 
 fi
+
+# Redirect output functions if not debug enabled
+run() {
+
+    if [[ "${verbose}" == "true" ]]; then
+
+        "$@"
+
+    else
+
+        "$@" > /dev/null
+
+    fi
+
+}
 
 # Set dotfiles directory and log file
 DOTFILES_DIR="$HOME/.dotfiles"
