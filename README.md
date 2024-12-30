@@ -78,6 +78,4 @@ To create symbolic links manually, use:
 
 - **TODO**: The following improvements are planned:
 
-  - Relocate git-install script to a separate repository.
-  - Update the script name from install.ps1 to something more descriptive.
   - Complete initial configurations for all supported applications.
