@@ -7,7 +7,7 @@ This repository provides configuration files and scripts for setting up symlinks
 1. **Git:** If Git is not installed, you can install it using the `git-install.ps1` script:
 
     ```powershell
-    Invoke-Expression (Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/norsemangrey/.dotfiles/master/git-install.ps1')
+    Invoke-Expression (Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/norsemangrey/windows-software-deployer/master/git/setup.ps1')
     ```
 
     This command installs Git, clones the repository, and executes the script automatically.
