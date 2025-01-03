@@ -79,3 +79,4 @@ To create symbolic links manually, use:
 - **TODO**: The following improvements are planned:
 
   - Complete initial configurations for all supported applications.
+  - Update README for Linux setup
