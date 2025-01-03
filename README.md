@@ -1,5 +1,7 @@
 This repository provides configuration files and scripts for setting up symlinks in a Windows development environment. The install.ps1 script will generate symbolic links to connect various configuration files to their respective target locations, including any sensitive configuration files stored in cloud providers.
 
+![alt text](windows-terminal-screenshot-1.png)
+
 ## Installation
 
 ### Prerequisites
