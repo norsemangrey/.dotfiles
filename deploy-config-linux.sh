@@ -77,6 +77,14 @@ run() {
 
 }
 
+# Check if the script is running in WSL
+isWsl() {
+
+    # Check /proc/version for WSL-specific terms
+    return grep -qEi "microsoft.*(subsystem|standard)" /proc/version; then
+
+}
+
 # Set dotfiles directory and log file
 dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
 
@@ -84,6 +92,45 @@ dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
 expandPath() {
     eval echo "$1"
 }
+
+# Set environment variable file path
+if isWsl; then
+
+    # Set environment variable file path for WSL
+    $envFile = "${dotfilesDirectory}/wsl.env"
+
+else
+
+    # Set environment variable file path for Linux
+    $envFile = "${dotfilesDirectory}/linux.env"
+
+fi
+
+# Load environment variables
+if [ -f "${envFile}" ]; then
+
+    logMessage "Loading environment variables from file (${envFile})..." "INFO"
+
+    # Read each line from the file and export it
+    while IFS='=' read -r key value; do
+
+        # Skip empty lines and comments
+        [[ -z "$key" || "$key" =~ ^# ]] && continue
+
+        logMessage "Setting environment variable: ${key}=${value}" "DEBUG"
+
+        # Export the variable
+        export "$key=$value"
+
+    done < "${envFile}"
+
+else
+
+    logMessage "Environment file (${envFile}) not found." "ERROR"
+
+    exit 1
+
+fi
 
 # Find and process all paths.txt files in subdirectories
 find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r pathsFile; do

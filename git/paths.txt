@@ -1,1 +1,3 @@
-w $Env:DOTFILES_WORK\git\git-config.work $Env:USERPROFILE\.gitconfig
+w $Env:DOTFILES_WORK\git\git-config-windows.work $Env:USERPROFILE\.gitconfig
+
+l $DOTFILES_WORK/git/git-config-linux.work $HOME/.gitconfig
