@@ -7,6 +7,7 @@ usage() {
     echo ""
     echo "Options:"
     echo "  -d, --debug             Turns on debug output messages."
+    echo "  -t, --dry-run           Simulates actions without making changes."
     echo "  -v, --verbose           Shows standards output from commands."
     echo "  -h, --help              Show this help message and exit."
     echo ""
@@ -22,6 +23,10 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         -d|--debug)
             debug=true
+            shift
+            ;;
+        -t|--dry-run)
+            dryRun=true
             shift
             ;;
         -v|--verbose)
@@ -161,7 +166,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         else
 
-            ln -s "${expandedSource}" "${expandedTarget}"
+            [[ "${dryRun}" != "true" ]] && ln -s "${expandedSource}" "${expandedTarget}"
 
             logMessage "Linked ${expandedSource} -> ${expandedTarget}" "INFO"
 
