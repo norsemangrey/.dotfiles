@@ -102,12 +102,12 @@ expandPath() {
 if isWsl; then
 
     # Set environment variable file path for WSL
-    $envFile = "${dotfilesDirectory}/wsl.env"
+    $envFile = "${dotfilesDirectory}/.env-wsl"
 
 else
 
     # Set environment variable file path for Linux
-    $envFile = "${dotfilesDirectory}/linux.env"
+    $envFile = "${dotfilesDirectory}/.env-linux"
 
 fi
 
