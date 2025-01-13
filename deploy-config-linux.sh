@@ -86,7 +86,7 @@ run() {
 isWsl() {
 
     # Check /proc/version for WSL-specific terms
-    return grep -qEi "microsoft.*(subsystem|standard)" /proc/version; then
+    grep -qEi "microsoft.*(subsystem|standard)" /proc/version
 
 }
 
