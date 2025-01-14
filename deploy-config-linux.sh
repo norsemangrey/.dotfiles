@@ -156,15 +156,27 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         # Verify and resolve/expand target path
         if [[ -e $(expandPath "${targetPathRaw}") ]]; then
 
+            echo "Target is absolute and exists"
+
             targetPath=$(expandPath "${targetPathRaw}")
 
         elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ ]]; then
 
-            targetPath=$(expandPath "${appDirectory}/${targetPathRaw}")
+            if [[ -e $(expandPath "${appDirectory}/${targetPathRaw}") ]]; then
+
+                echo "Target is relative and exists"
+
+                targetPath=$(expandPath "${appDirectory}/${targetPathRaw}")
+
+            else
+
+                Write-Message "Incorrect formatted target path (${targetPathRaw}) or relative path does not exist." "ERROR"
+
+            fi
 
         else
 
-            Write-Message "Issues with provided target path (${targetPathRaw})." "ERROR"
+            Write-Message "Incorrect formatted target path (${targetPathRaw}) or absolute path does not exist." "ERROR"
 
         fi
 
@@ -224,5 +236,3 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
     done
 
 done
-
-logMessage "Symlink creation completed." "INFO"
