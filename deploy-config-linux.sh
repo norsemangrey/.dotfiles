@@ -174,7 +174,9 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
                     logMessage "Symlink exists, but points to a different target (${currentTarget}). Recreating..." "DEBUG"
 
                     # Remove the incorrect symlink
-                    [[ "${dryRun}" != "true" ]] && rm "${symlinkPath}"
+                    if [[ "${dryRun}" != "true" ]]; then
+                        rm "${symlinkPath}"
+                    fi
 
                 else
 
@@ -186,17 +188,21 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
             else
 
-                logMessage "A file or directory exists in the symlink path ($symlinkPath) and is not a symlink. Replacing..." "INFO"
+                logMessage "A file or directory exists in the symlink path (${symlinkPath}) and is not a symlink. Replacing..." "INFO"
 
                 # It is not a symbolic link (regular file or directory)
-                [[ "${dryRun}" != "true" ]] && rm -rf "${symlinkPath}"
+                if [[ "${dryRun}" != "true" ]]; then
+                    rm -rf "${symlinkPath}"
+                fi
 
             fi
 
         else
 
-#            Create new symlink
-            [[ "${dryRun}" != "true" ]] && ln -s "${targetPath}" "${symlinkPath}"
+            # Create new symlink
+            if [[ "${dryRun}" != "true" ]]; then
+                ln -s "${targetPath}" "${symlinkPath}"
+            fi
 
             logMessage "Creating new symlink: ${symlinkPath} -> ${targetPath}" "INFO"
 
