@@ -117,7 +117,7 @@ if [ -f "${envFile}" ]; then
     logMessage "Loading environment variables from file (${envFile})..." "INFO"
 
     # Read each line from the file and export it
-    while IFS='=' read -r key value; do
+    cat "${envFile}" | while IFS='=' read -r key value; do
 
         # Skip empty lines and comments
         [[ -z "$key" || "$key" =~ ^# ]] && continue
@@ -127,7 +127,7 @@ if [ -f "${envFile}" ]; then
         # Export the variable
         export "$key=$value"
 
-    done < "${envFile}"
+    done
 
 else
 
