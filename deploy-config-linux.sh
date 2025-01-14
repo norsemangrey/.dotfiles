@@ -197,16 +197,14 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
             fi
 
-        else
-
-            # Create new symlink
-            if [[ "${dryRun}" != "true" ]]; then
-                ln -s "${targetPath}" "${symlinkPath}"
-            fi
-
-            logMessage "Creating new symlink: ${symlinkPath} -> ${targetPath}" "INFO"
-
         fi
+
+        # Create new symlink
+        if [[ "${dryRun}" != "true" ]]; then
+            ln -s "${targetPath}" "${symlinkPath}"
+        fi
+
+        logMessage "Creating new symlink: ${symlinkPath} -> ${targetPath}" "INFO"
 
     done
 
