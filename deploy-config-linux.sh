@@ -149,11 +149,26 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
     grep '^l' "${pathsFile}" | while IFS= read -r line; do
 
         # Extract source and target paths (remove the "l " prefix)
-        sourcePathRaw=$(echo "$line" | awk '{print $2}')
+        targetPathRaw=$(echo "$line" | awk '{print $2}')
         symlinkPathRaw=$(echo "$line" | awk '{print $3}')
 
-        # Expand environment variables and resolve full paths
-        targetPath=$(expandPath "${appDirectory}/${sourcePathRaw}")
+
+        # Verify and resolve/expand target path
+        if [[ -e $(expandPath "${targetPathRaw}") ]]; then
+
+            targetPath=$(expandPath "${targetPathRaw}")
+
+        elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ ]]
+
+            targetPath=$(expandPath "${appDirectory}/${targetPathRaw}")
+
+        else
+
+            Write-Message "Issues with provided target path "${targetPathRaw}"." "ERROR"
+
+        fi
+
+        # Resolve/expand symlink path
         symlinkPath=$(expandPath "${symlinkPathRaw}")
 
         # Create parent directory for symlink if necessary
