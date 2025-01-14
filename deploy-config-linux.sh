@@ -186,7 +186,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
             else
 
-                logMessage "A file or directory exists in the symlink path ($linkPath) and is not a symlink. Replacing..." "INFO"
+                logMessage "A file or directory exists in the symlink path ($symlinkPath) and is not a symlink. Replacing..." "INFO"
 
                 # It is not a symbolic link (regular file or directory)
                 [[ "${dryRun}" != "true" ]] && rm -rf "${symlinkPath}"
