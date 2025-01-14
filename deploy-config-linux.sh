@@ -158,13 +158,13 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
             targetPath=$(expandPath "${targetPathRaw}")
 
-        elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ ]]
+        elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ ]]; then
 
             targetPath=$(expandPath "${appDirectory}/${targetPathRaw}")
 
         else
 
-            Write-Message "Issues with provided target path "${targetPathRaw}"." "ERROR"
+            Write-Message "Issues with provided target path (${targetPathRaw})." "ERROR"
 
         fi
 
