@@ -239,9 +239,9 @@ function New-Symlink {
 
         } else {
 
-            # It is not a symbolic link (regular file or directory)
             Write-Message "A file or directory exists in the symlink path ($linkPath) and is not a symlink. Replacing..." "INFO"
 
+            # It is not a symbolic link (regular file or directory)
             if ( -not $dryRun ) { Remove-Item -Path $linkPath -Force -Recurse }
 
         }

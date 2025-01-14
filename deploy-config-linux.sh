@@ -149,26 +149,56 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
     grep '^l' "${pathsFile}" | while IFS= read -r line; do
 
         # Extract source and target paths (remove the "l " prefix)
-        sourcePath=$(echo "$line" | awk '{print $2}')
-        targetPath=$(echo "$line" | awk '{print $3}')
+        sourcePathRaw=$(echo "$line" | awk '{print $2}')
+        symlinkPathRaw=$(echo "$line" | awk '{print $3}')
 
         # Expand environment variables and resolve full paths
-        expandedSource=$(expandPath "${appDirectory}/${sourcePath}")
-        expandedTarget=$(expandPath "${targetPath}")
+        targetPath=$(expandPath "${appDirectory}/${sourcePathRaw}")
+        symlinkPath=$(expandPath "${symlinkPathRaw}")
 
-        # Create parent directory for target if necessary
-        mkdir -p "$(dirname "${expandedTarget}")"
+        # Create parent directory for symlink if necessary
+        mkdir -p "$(dirname "${symlinkPath}")"
 
-        # Create symlink, handling existing files
-        if [[ -e "${expandedTarget}" || -L "${expandedTarget}" ]]; then
+        # Check if an item already exists (file, directory, or symlink, even broken symlink)
+        if [[ -e "${symlinkPath}" || -L "${symlinkPath}" ]]; then
 
-            logMessage "The target path (${expandedTarget}) exists. Skipping..." "DEBUG"
+            # Check specifically if the item is a symlink
+            if [[ -L "${symlinkPath}" ]]; then
+
+                # If it's a symlink, check if it points to the correct source
+                currentTarget=$(readlink "${symlinkPath}")
+
+                # Check if the link target path is correct
+                if [[ "${currentTarget}" != "${targetPath}" ]]; then
+
+                    logMessage "Symlink exists, but points to a different target (${currentTarget}). Recreating..." "DEBUG"
+
+                    # Remove the incorrect symlink
+                    [[ "${dryRun}" != "true" ]] && rm "${symlinkPath}"
+
+                else
+
+                    logMessage "Symlink already exists and points to the correct target (${targetPath})" "INFO"
+
+                    continue
+
+                fi
+
+            else
+
+                logMessage "A file or directory exists in the symlink path ($linkPath) and is not a symlink. Replacing..." "INFO"
+
+                # It is not a symbolic link (regular file or directory)
+                [[ "${dryRun}" != "true" ]] && rm -rf "${symlinkPath}"
+
+            fi
 
         else
 
-            [[ "${dryRun}" != "true" ]] && ln -s "${expandedSource}" "${expandedTarget}"
+#            Create new symlink
+            [[ "${dryRun}" != "true" ]] && ln -s "${targetPath}" "${symlinkPath}"
 
-            logMessage "Linked ${expandedSource} -> ${expandedTarget}" "INFO"
+            logMessage "Creating new symlink: ${symlinkPath} -> ${targetPath}" "INFO"
 
         fi
 
