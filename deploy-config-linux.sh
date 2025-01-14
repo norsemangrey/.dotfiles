@@ -170,13 +170,17 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
             else
 
-                Write-Message "Incorrect formatted target path (${targetPathRaw}) or relative path does not exist." "ERROR"
+                logMessage "Incorrect formatted target path (${targetPathRaw}) or relative path does not exist." "ERROR"
+
+                continue
 
             fi
 
         else
 
-            Write-Message "Incorrect formatted target path (${targetPathRaw}) or absolute path does not exist." "ERROR"
+            logMessage "Incorrect formatted target path (${targetPathRaw}) or absolute path does not exist." "ERROR"
+
+            continue
 
         fi
 
