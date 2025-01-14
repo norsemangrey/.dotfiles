@@ -4,9 +4,9 @@
 # EXPORT ENVIRONMENT VARIABLE #
 ###############################
 
-export TERM='rxvt-256color'
 export DOTFILES="$HOME/.dotfiles"
 export WORKSPACE="$HOME/workspace"
+export LOG_PATH="$HOME/logs"
 
 # XDG
 export XDG_CONFIG_HOME=$HOME/.config

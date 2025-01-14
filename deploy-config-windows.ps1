@@ -42,7 +42,7 @@ Import-Module $modulePath
 function Read-AndSetEnvironmentVariables {
 
     # Define the path to your .env file
-    $envFilePath = ".env-windows"
+    $envFilePath = ".env.windows"
 
     # Check if the .env file exists
     if (Test-Path -Path $envFilePath) {
