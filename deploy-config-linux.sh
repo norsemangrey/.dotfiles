@@ -208,7 +208,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
                 # Check if the link target path is correct
                 if [[ "${currentTarget}" != "${targetPath}" ]]; then
 
-                    logMessage "Symlink exists, but points to a different target (${currentTarget}). Recreating..." "DEBUG"
+                    logMessage "Symlink exists (${symlinkPath}), but points to a different target (${currentTarget}). Recreating..." "DEBUG"
 
                     # Remove the incorrect symlink
                     if [[ "${dryRun}" != "true" ]]; then
@@ -217,7 +217,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
                 else
 
-                    logMessage "Symlink already exists and points to the correct target (${targetPath})" "INFO"
+                    logMessage "Symlink already exists (${symlinkPath}) and points to the correct target (${targetPath})" "INFO"
 
                     continue
 
