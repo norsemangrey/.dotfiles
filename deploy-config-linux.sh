@@ -152,25 +152,24 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         targetPathRaw=$(echo "$line" | awk '{print $2}')
         symlinkPathRaw=$(echo "$line" | awk '{print $3}')
 
+        # Expand initial absolute and relative paths
+        targetPathAbsolute=$(expandPath "${targetPathRaw}")
+        targetPathRelative=$(expandPath "${appDirectory}/${targetPathRaw}")
 
-        # Verify and resolve/expand target path
-        if [[ -e $(expandPath "${targetPathRaw}") ]]; then
+        # Verify/test target path
+        if [[ -e "${targetPathAbsolute}" ]]; then
 
-            echo "Target is absolute and exists"
+            targetPath="${targetPathAbsolute}"
 
-            targetPath=$(expandPath "${targetPathRaw}")
+        elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ && ! "${targetPathRaw}" =~ ^\$ ]]; then
 
-        elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ ]]; then
+            if [[ -e "${targetPathRelative}" ]]; then
 
-            if [[ -e $(expandPath "${appDirectory}/${targetPathRaw}") ]]; then
-
-                echo "Target is relative and exists"
-
-                targetPath=$(expandPath "${appDirectory}/${targetPathRaw}")
+                targetPath="${targetPathRelative}"
 
             else
 
-                logMessage "Incorrect formatted target path (${targetPathRaw}) or relative path does not exist." "ERROR"
+                logMessage "Incorrect formatted target path (${targetPathRaw}) or relative path (${targetPathRelative}) does not exist." "ERROR"
 
                 continue
 
@@ -178,7 +177,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         else
 
-            logMessage "Incorrect formatted target path (${targetPathRaw}) or absolute path does not exist." "ERROR"
+            logMessage "Incorrect formatted target path (${targetPathRaw}) or absolute path (${targetPathAbsolute}) does not exist." "ERROR"
 
             continue
 
@@ -188,7 +187,9 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         symlinkPath=$(expandPath "${symlinkPathRaw}")
 
         # Create parent directory for symlink if necessary
-        mkdir -p "$(dirname "${symlinkPath}")"
+        if [[ "${dryRun}" != "true" ]]; then
+            mkdir -p "$(dirname "${symlinkPath}")"
+        fi
 
         # Check if an item already exists (file, directory, or symlink, even broken symlink)
         if [[ -e "${symlinkPath}" || -L "${symlinkPath}" ]]; then
