@@ -141,9 +141,10 @@ fi
 find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
 
     # Set current app directory
-    appDirectory=$(dirname "$pathsFile")
+    appPath=$(dirname "$pathsFile")
+    appDirectory=$(basename "$appPath")
 
-    logMessage "Processing ${pathsFile}..." "INFO"
+    logMessage "Processing symlink paths for '${appDirectory}'..." "INFO"
 
     # Process only lines starting with "l "
     grep '^l' "${pathsFile}" | while IFS= read -r line; do
@@ -152,17 +153,21 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         targetPathRaw=$(echo "$line" | awk '{print $2}')
         symlinkPathRaw=$(echo "$line" | awk '{print $3}')
 
-        # Expand initial absolute and relative paths
+        # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
-        targetPathRelative=$(expandPath "${appDirectory}/${targetPathRaw}")
+        targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
 
         # Verify/test target path
+
+        # Check if the target path is an existing absolute path
         if [[ -e "${targetPathAbsolute}" ]]; then
 
             targetPath="${targetPathAbsolute}"
 
+        # Check if the target path is a relative path
         elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ && ! "${targetPathRaw}" =~ ^\$ ]]; then
 
+            # Check if the relative path exists
             if [[ -e "${targetPathRelative}" ]]; then
 
                 targetPath="${targetPathRelative}"
