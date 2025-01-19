@@ -165,6 +165,8 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
         targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
 
+        echo "Absolute ${targetPathAbsolute}"
+        echo "Relative ${targetPathRelative}"
 
         # Verify/test target path
 
