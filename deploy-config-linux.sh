@@ -122,7 +122,7 @@ if [ -f "${envFile}" ]; then
         # Skip empty lines and comments
         [[ -z "$key" || "$key" =~ ^# ]] && continue
 
-        $envPath=$(expandPath "${value}")
+        envPath=$(expandPath "${value}")
 
         logMessage "Setting environment variable: ${key}=${envPath}" "DEBUG"
 
