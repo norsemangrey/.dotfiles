@@ -96,10 +96,11 @@ dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
 # Function to expand environment variables  and resolve the actual path
 expandPath() {
 
+    echo "Input path: $1" >&2
     local expandedPath
-
+    echo "Expanded path: ${expandedPath}" >&2
     expandedPath=$(eval echo "$1")
-
+    echo "Resolved path: ${expandedPath}" >&2
     realpath -m "${expandedPath}"
 
 }
