@@ -199,8 +199,10 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         fi
 
+        echo "${symlinkPathRaw}"
         # Resolve/expand symlink path
         symlinkPath=$(expandPath "${symlinkPathRaw}")
+        echo "${symlinkPath}"
 
         # Create parent directory for symlink if necessary
         if [[ "${dryRun}" != "true" ]]; then
