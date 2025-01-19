@@ -122,7 +122,9 @@ if [ -f "${envFile}" ]; then
         # Skip empty lines and comments
         [[ -z "$key" || "$key" =~ ^# ]] && continue
 
-        logMessage "Setting environment variable: ${key}=${value}" "DEBUG"
+        $envPath = $(expandPath "${value}")
+
+        logMessage "Setting environment variable: ${key}=${envPath}" "DEBUG"
 
         # Export the variable
         export "$key=$value"
@@ -204,6 +206,9 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
                 # If it's a symlink, check if it points to the correct source
                 currentTarget=$(readlink "${symlinkPath}")
+
+                echo "Current: ${currentTarget}"
+                echo "New: ${targetPath}"
 
                 # Check if the link target path is correct
                 if [[ "${currentTarget}" != "${targetPath}" ]]; then
