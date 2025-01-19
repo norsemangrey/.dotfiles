@@ -93,9 +93,15 @@ isWsl() {
 # Set dotfiles directory and log file
 dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
 
-# Function to expand environment variables in paths
+# Function to expand environment variables  and resolve the actual path
 expandPath() {
-    eval echo "$1"
+
+    local expandedPath
+
+    expandedPath=$(eval echo "$1")
+
+    realpath -m "${expandedPath}"
+
 }
 
 # Set environment variable file path
@@ -158,6 +164,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
         targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
+
 
         # Verify/test target path
 
