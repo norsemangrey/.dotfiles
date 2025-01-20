@@ -104,6 +104,18 @@ expandPath() {
 
 }
 
+expandPathTest() {
+
+    echo "Input path: $1"
+    local expandedPath
+    echo "Local var: ${expandedPath}"
+    expandedPath=$(eval echo "$1")
+    echo "Expanded path: ${expandedPath}"
+    realpath -ms "${expandedPath}"
+    echo "Resolved path: ${expandedPath}"
+}
+
+
 # Set environment variable file path
 if isWsl; then
 
@@ -164,6 +176,10 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
         targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
+        expandPathTest "${appPath}/${targetPathRaw}"
+
+        echo "Absolute ${targetPathAbsolute}"
+        echo "Relative ${targetPathRelative}"
 
         # Verify/test target path
 
@@ -196,8 +212,11 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         fi
 
+        echo "${symlinkPathRaw}"
         # Resolve/expand symlink path
         symlinkPath=$(expandPath "${symlinkPathRaw}")
+        expandPathTest "${symlinkPathRaw}"
+        echo "Symlink ${symlinkPath}"
 
         # Create parent directory for symlink if necessary
         if [[ "${dryRun}" != "true" ]]; then
@@ -212,6 +231,9 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
                 # If it's a symlink, check if it points to the correct source
                 currentTarget=$(readlink "${symlinkPath}")
+
+                echo "Current: ${currentTarget}"
+                echo "New: ${targetPath}"
 
                 # Check if the link target path is correct
                 if [[ "${currentTarget}" != "${targetPath}" ]]; then
