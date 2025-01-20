@@ -148,10 +148,6 @@ fi
 # Find and process all paths.txt files in subdirectories
 find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
 
-    # Set current app directory
-    appPath=$(dirname "$pathsFile")
-    appDirectory=$(basename "$appPath")
-
     logMessage "Processing symlink paths for '${appDirectory}'..." "INFO"
 
     # Process only lines starting with "l "
@@ -164,9 +160,6 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
         targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
-
-        echo "Absolute ${targetPathAbsolute}"
-        echo "Relative ${targetPathRelative}"
 
         # Verify/test target path
 
