@@ -130,6 +130,10 @@ expandPathTest() {
     local expandedPath
     local relativeBase="$2"
     local resolvedPath
+
+    # Expand any variables in the input path
+    expandedPath=$(eval echo "$1")
+
     if [[ "$expandedPath" == \~* ]]; then
 
         expandedPath="${HOME}${expandedPath:1}"
