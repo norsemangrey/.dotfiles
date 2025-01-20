@@ -115,6 +115,8 @@ expandPath() {
 
     fi
 
+    echo "${expandedPath}"
+
 }
 
 expandPathTest() {
