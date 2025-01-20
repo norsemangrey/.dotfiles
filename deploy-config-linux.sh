@@ -98,9 +98,22 @@ expandPath() {
 
     local expandedPath
 
+    # Expand any variables in the input path
     expandedPath=$(eval echo "$1")
 
-    realpath -ms "${expandedPath}"
+    # Expand ~ to the full path if it exists
+    if [[ "$expandedPath" == \~* ]]; then
+
+        expandedPath="${HOME}${expandedPath:1}"
+
+    fi
+
+    # Only resolve the path to its absolute form if it starts with ./ or ../
+    if [[ "$expandedPath" == ./* || "$expandedPath" == ../* ]]; then
+
+        expandedPath=$(realpath -ms "${expandedPath}")
+
+    fi
 
 }
 
@@ -109,9 +122,17 @@ expandPathTest() {
     echo "Input path: $1"
     local expandedPath
     local resolvedPath
-    expandedPath=$(eval echo "$1")
+    if [[ "$expandedPath" == \~* ]]; then
+
+        expandedPath="${HOME}${expandedPath:1}"
+
+    fi
     echo "Expanded path: ${expandedPath}"
-    resolvedPath=$(realpath -ms "${expandedPath}")
+    if [[ "$expandedPath" == ./* || "$expandedPath" == ../* ]]; then
+
+        expandedPath=$(realpath -ms "${expandedPath}")
+
+    fi
     echo "Resolved path: ${resolvedPath}"
 
 }
