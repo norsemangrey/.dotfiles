@@ -210,7 +210,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         symlinkPathRaw=$(echo "$line" | awk '{print $3}')
 
         # Resolve/expand initial absolute and relative paths
-        targetPathAbsolute=$(expandPath "${targetPathRaw}")
+        targetPathAbsolute=$(expandPath "${targetPathRaw}" "${appPath}")
         #targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
         expandPathTest "${targetPathRaw}"
         echo "Absolute ${targetPathAbsolute}"
@@ -249,7 +249,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         fi
 
         # Resolve/expand symlink path
-        symlinkPath=$(expandPath "${symlinkPathRaw}")
+        symlinkPath=$(expandPath "${symlinkPathRaw}" "${appPath}")
         expandPathTest "${symlinkPathRaw}"
         echo "Symlink ${symlinkPath}"
 
