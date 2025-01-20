@@ -108,11 +108,12 @@ expandPathTest() {
 
     echo "Input path: $1"
     local expandedPath
-    echo "Local var: ${expandedPath}"
+    local resolvedPath
     expandedPath=$(eval echo "$1")
     echo "Expanded path: ${expandedPath}"
-    realpath -ms "${expandedPath}"
-    echo "Resolved path: ${expandedPath}"
+    resolvedPath=$(realpath -ms "${expandedPath}")
+    echo "Resolved path: ${resolvedPath}"
+
 }
 
 
@@ -176,9 +177,9 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
         targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
-        expandPathTest "${appPath}/${targetPathRaw}"
-
+        expandPathTest "${targetPathRaw}"
         echo "Absolute ${targetPathAbsolute}"
+        expandPathTest "${appPath}/${targetPathRaw}"
         echo "Relative ${targetPathRelative}"
 
         # Verify/test target path
@@ -212,7 +213,6 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         fi
 
-        echo "${symlinkPathRaw}"
         # Resolve/expand symlink path
         symlinkPath=$(expandPath "${symlinkPathRaw}")
         expandPathTest "${symlinkPathRaw}"
