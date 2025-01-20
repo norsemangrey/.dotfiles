@@ -100,22 +100,9 @@ expandPath() {
 
     expandedPath=$(eval echo "$1")
 
-    realpath -m "${expandedPath}"
+    realpath -ms "${expandedPath}"
 
 }
-
-expandPathTest() {
-
-    echo "Input path: $1"
-    local expandedPath
-    echo "Local var: ${expandedPath}"
-    expandedPath=$(eval echo "$1")
-    echo "Expanded path: ${expandedPath}"
-    realpath -m "${expandedPath}"
-    echo "Resolved path: ${expandedPath}"
-
-}
-
 
 # Set environment variable file path
 if isWsl; then
@@ -177,7 +164,6 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
         targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
-        expandPathTest "${appPath}/${targetPathRaw}"
 
         echo "Absolute ${targetPathAbsolute}"
         echo "Relative ${targetPathRelative}"
@@ -213,11 +199,8 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         fi
 
-        echo "${symlinkPathRaw}"
         # Resolve/expand symlink path
         symlinkPath=$(expandPath "${symlinkPathRaw}")
-        expandPathTest "${symlinkPathRaw}"
-        echo "Symlink ${symlinkPath}"
 
         # Create parent directory for symlink if necessary
         if [[ "${dryRun}" != "true" ]]; then
