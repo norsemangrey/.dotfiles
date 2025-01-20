@@ -97,6 +97,7 @@ dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
 expandPath() {
 
     local expandedPath
+    local relativeBase="$2"
 
     # Expand any variables in the input path
     expandedPath=$(eval echo "$1")
@@ -113,6 +114,10 @@ expandPath() {
 
         expandedPath=$(realpath -ms "${expandedPath}")
 
+    else
+
+        expandedPath=$(realpath -ms "${relativeBase}/${expandedPath}")
+
     fi
 
     echo "${expandedPath}"
@@ -123,6 +128,7 @@ expandPathTest() {
 
     echo "Input path: $1"
     local expandedPath
+    local relativeBase="$2"
     local resolvedPath
     if [[ "$expandedPath" == \~* ]]; then
 
@@ -130,11 +136,17 @@ expandPathTest() {
 
     fi
     echo "Expanded path: ${expandedPath}"
+    # Only resolve the path to its absolute form if it starts with ./ or ../
     if [[ "$expandedPath" == ./* || "$expandedPath" == ../* ]]; then
 
         expandedPath=$(realpath -ms "${expandedPath}")
 
+    else
+
+        expandedPath=$(realpath -ms "${relativeBase}/${expandedPath}")
+
     fi
+
     echo "Resolved path: ${resolvedPath}"
 
 }
@@ -199,11 +211,11 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
-        targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
+        #targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
         expandPathTest "${targetPathRaw}"
         echo "Absolute ${targetPathAbsolute}"
-        expandPathTest "${appPath}/${targetPathRaw}"
-        echo "Relative ${targetPathRelative}"
+        #expandPathTest "${appPath}/${targetPathRaw}"
+        #echo "Relative ${targetPathRelative}"
 
         # Verify/test target path
 
@@ -213,20 +225,20 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
             targetPath="${targetPathAbsolute}"
 
         # Check if the target path is a relative path
-        elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ && ! "${targetPathRaw}" =~ ^\$ ]]; then
+        # elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ && ! "${targetPathRaw}" =~ ^\$ ]]; then
 
-            # Check if the relative path exists
-            if [[ -e "${targetPathRelative}" ]]; then
+        #     # Check if the relative path exists
+        #     if [[ -e "${targetPathRelative}" ]]; then
 
-                targetPath="${targetPathRelative}"
+        #         targetPath="${targetPathRelative}"
 
-            else
+        #     else
 
-                logMessage "Incorrect formatted target path (${targetPathRaw}) or relative path (${targetPathRelative}) does not exist." "ERROR"
+        #         logMessage "Incorrect formatted target path (${targetPathRaw}) or relative path (${targetPathRelative}) does not exist." "ERROR"
 
-                continue
+        #         continue
 
-            fi
+        #     fi
 
         else
 
