@@ -148,6 +148,10 @@ fi
 # Find and process all paths.txt files in subdirectories
 find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
 
+    # Set current app directory
+    appPath=$(dirname "$pathsFile")
+    appDirectory=$(basename "$appPath")
+
     logMessage "Processing symlink paths for '${appDirectory}'..." "INFO"
 
     # Process only lines starting with "l "
@@ -208,9 +212,6 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
                 # If it's a symlink, check if it points to the correct source
                 currentTarget=$(readlink "${symlinkPath}")
-
-                echo "Current: ${currentTarget}"
-                echo "New: ${targetPath}"
 
                 # Check if the link target path is correct
                 if [[ "${currentTarget}" != "${targetPath}" ]]; then
