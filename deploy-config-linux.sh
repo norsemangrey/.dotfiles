@@ -108,10 +108,11 @@ expandPathTest() {
 
     echo "Input path: $1"
     local expandedPath
-    echo "Expanded path: ${expandedPath}"
+    echo "Local var: ${expandedPath}"
     expandedPath=$(eval echo "$1")
-    echo "Resolved path: ${expandedPath}"
+    echo "Expanded path: ${expandedPath}"
     realpath -m "${expandedPath}"
+    echo "Resolved path: ${expandedPath}"
 
 }
 
@@ -216,7 +217,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         # Resolve/expand symlink path
         symlinkPath=$(expandPath "${symlinkPathRaw}")
         expandPathTest "${symlinkPathRaw}"
-        echo "${symlinkPath}"
+        echo "Symlink ${symlinkPath}"
 
         # Create parent directory for symlink if necessary
         if [[ "${dryRun}" != "true" ]]; then
