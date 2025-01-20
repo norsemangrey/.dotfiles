@@ -96,22 +96,21 @@ dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
 # Function to expand environment variables  and resolve the actual path
 expandPath() {
 
-    echo "Input path: $1" >&2
     local expandedPath
-    echo "Expanded path: ${expandedPath}" >&2
+
     expandedPath=$(eval echo "$1")
-    echo "Resolved path: ${expandedPath}" >&2
+
     realpath -m "${expandedPath}"
 
 }
 
 expandPathTest() {
 
-    echo "Input path: $1" >&2
+    echo "Input path: $1"
     local expandedPath
-    echo "Expanded path: ${expandedPath}" >&2
+    echo "Expanded path: ${expandedPath}"
     expandedPath=$(eval echo "$1")
-    echo "Resolved path: ${expandedPath}" >&2
+    echo "Resolved path: ${expandedPath}"
     realpath -m "${expandedPath}"
 
 }
@@ -177,7 +176,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}")
         targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
-        test=$(expandPathTest "${appPath}/${targetPathRaw}")
+        expandPathTest "${appPath}/${targetPathRaw}"
 
         echo "Absolute ${targetPathAbsolute}"
         echo "Relative ${targetPathRelative}"
@@ -216,7 +215,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
         echo "${symlinkPathRaw}"
         # Resolve/expand symlink path
         symlinkPath=$(expandPath "${symlinkPathRaw}")
-        test=$(expandPathTest "${symlinkPathRaw}")
+        expandPathTest "${symlinkPathRaw}"
         echo "${symlinkPath}"
 
         # Create parent directory for symlink if necessary
