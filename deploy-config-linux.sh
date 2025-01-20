@@ -109,14 +109,20 @@ expandPath() {
 
     fi
 
-    # Only resolve the path to its absolute form if it starts with ./ or ../
-    if [[ "$expandedPath" == ./* || "$expandedPath" == ../* ]]; then
+    # Check that the path is not absolute and try to resolve it as a relative path
+    if [[ "${expandedPath}" != /* ]]; then
 
-        expandedPath=$(realpath -ms "${expandedPath}")
+        # Only resolve the path to its absolute form if it starts with ./ or ../
+        if [[ "$expandedPath" == ./* || "$expandedPath" == ../* ]]; then
 
-    else
+            expandedPath=$(realpath -ms "${expandedPath}")
 
-        expandedPath=$(realpath -ms "${relativeBase}/${expandedPath}")
+        # Otherwise, resolve the path relative to the base path
+        else
+
+            expandedPath=$(realpath -ms "${relativeBase}/${expandedPath}")
+
+        fi
 
     fi
 
