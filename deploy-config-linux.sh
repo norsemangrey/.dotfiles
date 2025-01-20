@@ -93,6 +93,7 @@ isWsl() {
 # Set dotfiles directory and log file
 dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
 
+
 # Function to expand environment variables  and resolve the actual path
 expandPath() {
 
@@ -127,37 +128,6 @@ expandPath() {
     fi
 
     echo "${expandedPath}"
-
-}
-
-expandPathTest() {
-
-    echo "Input path: $1"
-    local expandedPath
-    local relativeBase="$2"
-    local resolvedPath
-
-    # Expand any variables in the input path
-    expandedPath=$(eval echo "$1")
-
-    if [[ "$expandedPath" == \~* ]]; then
-
-        expandedPath="${HOME}${expandedPath:1}"
-
-    fi
-    echo "Expanded path: ${expandedPath}"
-    # Only resolve the path to its absolute form if it starts with ./ or ../
-    if [[ "$expandedPath" == ./* || "$expandedPath" == ../* ]]; then
-
-        expandedPath=$(realpath -ms "${expandedPath}")
-
-    else
-
-        expandedPath=$(realpath -ms "${relativeBase}/${expandedPath}")
-
-    fi
-
-    echo "Resolved path: ${resolvedPath}"
 
 }
 
@@ -221,11 +191,6 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         # Resolve/expand initial absolute and relative paths
         targetPathAbsolute=$(expandPath "${targetPathRaw}" "${appPath}")
-        #targetPathRelative=$(expandPath "${appPath}/${targetPathRaw}")
-        expandPathTest "${targetPathRaw}"
-        echo "Absolute ${targetPathAbsolute}"
-        #expandPathTest "${appPath}/${targetPathRaw}"
-        #echo "Relative ${targetPathRelative}"
 
         # Verify/test target path
 
@@ -234,25 +199,9 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
             targetPath="${targetPathAbsolute}"
 
-        # Check if the target path is a relative path
-        # elif [[ ! "${targetPathRaw}" =~ ^/ && ! "${targetPathRaw}" =~ ^~ && ! "${targetPathRaw}" =~ ^\$ ]]; then
-
-        #     # Check if the relative path exists
-        #     if [[ -e "${targetPathRelative}" ]]; then
-
-        #         targetPath="${targetPathRelative}"
-
-        #     else
-
-        #         logMessage "Incorrect formatted target path (${targetPathRaw}) or relative path (${targetPathRelative}) does not exist." "ERROR"
-
-        #         continue
-
-        #     fi
-
         else
 
-            logMessage "Incorrect formatted target path (${targetPathRaw}) or absolute path (${targetPathAbsolute}) does not exist." "ERROR"
+            logMessage "Incorrect formatted target path (${targetPathRaw}) or path (${targetPathAbsolute}) does not exist." "ERROR"
 
             continue
 
@@ -260,8 +209,6 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         # Resolve/expand symlink path
         symlinkPath=$(expandPath "${symlinkPathRaw}" "${appPath}")
-        expandPathTest "${symlinkPathRaw}"
-        echo "Symlink ${symlinkPath}"
 
         # Create parent directory for symlink if necessary
         if [[ "${dryRun}" != "true" ]]; then
@@ -276,9 +223,6 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
                 # If it's a symlink, check if it points to the correct source
                 currentTarget=$(readlink "${symlinkPath}")
-
-                echo "Current: ${currentTarget}"
-                echo "New: ${targetPath}"
 
                 # Check if the link target path is correct
                 if [[ "${currentTarget}" != "${targetPath}" ]]; then
