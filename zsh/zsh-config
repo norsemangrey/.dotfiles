@@ -1,5 +1,17 @@
 export PATH=$PATH:$HOME/.local/bin
 
+# +-------------------+
+# | LANGUAGE & REGION |
+# +-------------------+
+
+export LANG=en_US.UTF-8
+export LC_CTYPE=nb_NO.UTF-8
+export LC_TIME=nb_NO.UTF-8
+export LC_NUMERIC=nb_NO.UTF-8
+export LC_MONETARY=nb_NO.UTF-8
+export LC_COLLATE=en_US.UTF-8
+export LC_MESSAGES=en_US.UTF-8
+
 # +--------+
 # | PROMPT |
 # +--------+
