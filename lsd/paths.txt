@@ -1,5 +1,5 @@
 w lsd-colors.yaml $Env:USERPROFILE\.config\lsd\colors.yaml
 w lsd-config.yaml $Env:USERPROFILE\.config\lsd\config.yaml
 
-l lsd-colors.yaml $HOME\.config\lsd\colors.yaml
-l lsd-config.yaml $HOME\.config\lsd\config.yaml
+l lsd-colors.yaml $HOME/.config/lsd/colors.yaml
+l lsd-config.yaml $HOME/.config/lsd/config.yaml
