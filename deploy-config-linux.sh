@@ -201,7 +201,7 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
         else
 
-            logMessage "Incorrect formatted target path (${targetPathRaw}) or path (${targetPathAbsolute}) does not exist." "ERROR"
+            logMessage "Incorrect formatted target path (${targetPathRaw}), missing envs, or path (${targetPathAbsolute}) does not exist." "ERROR"
 
             continue
 
