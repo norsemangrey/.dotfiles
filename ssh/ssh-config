@@ -1,5 +1,6 @@
 Include config.work
 Include config.home
+Include config.other
 
 Host *
   IdentitiesOnly yes
