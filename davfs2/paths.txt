@@ -1,0 +1,1 @@
+l /etc/davfs2/secrets $HOME/.config/davfs2/secrets
