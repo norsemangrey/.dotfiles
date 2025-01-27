@@ -61,7 +61,7 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or po
 
 # Include the completions from the zsh-completions package
 # Loads additional completion definitions from the plugin (but not required)
-fpath=(path/to/zsh-completions/src $fpath)
+fpath=($ZDOTDIR/plugins/zsh-completions/src $fpath)
 
 # Initialize the completion for the current ZSH session
 autoload -Uz compinit
