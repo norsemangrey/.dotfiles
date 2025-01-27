@@ -3,7 +3,7 @@
 
 export PATH=$PATH:$HOME/.local/bin
 
-# Stop anoying beeping
+# Stop annoying beeping
 unsetopt BEEP
 
 # +-------------------+
@@ -124,7 +124,8 @@ zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
 # Load Auto-Suggestions plugin
 source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
+# Set the font highlight style of the auto-suggestions
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
 
 # +--------------+
 # | HIGHLIGHTING |
@@ -143,7 +144,7 @@ function simple() {
   echo "Enabling simple prompt..."
 }
 
-# Set env for full promt line
+# Set env for full prompt line
 function full() {
   export POSH_FULL_PROMPT="1"
   export "Enabling simple prompt..."
@@ -153,12 +154,14 @@ function set_poshcontext() {
     export POSH_FULL_PROMPT="0"
 }
 
+# Load Oh-My-Posh prompt
 eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/themes/posh-custom-theme.omp.json)"
 
 # +------+
 # | INFO |
 # +------+
 
+# Display system information
 fastfetch
 
 # +----------+
