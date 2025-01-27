@@ -1,0 +1,1 @@
+l $DOTFILES_CLOUD/nano/nano-history $HOME/.config/local/share/nano/search_history
