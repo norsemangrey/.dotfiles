@@ -3,12 +3,12 @@
     "logo": {
         "source": "%USERPROFILE%\\.config\\fastfetch\\ascii.txt",
         "padding": {
-            "top": 5,
+            "top": 4,
             "right": 10
         },
         "color": {
-            "1": "36"
-        },
+            "1": "cyan"
+        }
     },
     "display": {
         "percent": {
@@ -22,124 +22,112 @@
         "break",
         {
             "type": "title",
-            "format": "               {1}  |    {2}",
-            "outputColor": "36"
+            "format": "                {1}  |    {2}",
+            "outputColor": "cyan"
         },
         "break",
         {
             "type": "custom",
-            "format": "                 \u001b[30m●  \u001b[31m●  \u001b[32m●  \u001b[33m●  \u001b[34m●  \u001b[35m●  \u001b[36m●  \u001b[37m●"
+            "format": "                  \u001b[{#black}●  \u001b[{#red}●  \u001b[{#green}●  \u001b[{#yellow}●  \u001b[{#blue}●  \u001b[{#magenta}●  \u001b[{#cyan}●  \u001b[{#white}●"
         },
         "break",
         {
             "type": "custom",
-            "format": "\u001b[33m╭──────────────── Software Information ────────────────╮"
+            "format": "\u001b[{#yellow}╭───────────────── Software Information ─────────────────╮"
         },
-	"break",
+        "break",
         {
             "type": "os",
             "format": "{3} {8} {6}",
-            "key": "     ➜  {#36}OS",
-            "keyColor": "33",
+            "key": "     ➜  {#cyan}OS",
+            "keyColor": "yellow"
         },
         {
             "type": "shell",
-            "key": "     ➜  {#36}Shell",
-            "keyColor": "33",
+            "key": "     ➜  {#cyan}Shell",
+            "keyColor": "yellow"
         },
         {
             "type": "terminal",
-            "key": "     ➜  {#36}Terminal",
-            "keyColor": "33",
+            "key": "     ➜  {#cyan}Terminal",
+            "keyColor": "yellow"
         },
         {
             "type": "packages",
-            "key": "   󰏖  ➜  {#36}Packages",
-            "keyColor": "33",
+            "key": "   󰏖  ➜  {#cyan}Packages",
+            "keyColor": "yellow"
         },
         "break",
-        // {
-        //     "type": "custom",
-        //     "format": "\u001b[33m├──────────────── Hardware Information ────────────────┤"
-        // },
         {
             "type": "custom",
-            "format": "\u001b[33m╭──────────────── Hardware Information ────────────────╮"
+            "format": "\u001b[{#yellow}╭───────────────── Hardware Information ─────────────────╮"
         },
         "break",
         {
             "type": "host",
             "format": "{2}",
-            "key": "     ➜  {#36}Host",
-            "keyColor": "33",
+            "key": "     ➜  {#cyan}Host",
+            "keyColor": "yellow"
         },
         {
             "type": "board",
             "format": "{2} {1}",
-            "key": "     ➜  {#36}Motherboard",
-            "keyColor": "33",
+            "key": "     ➜  {#cyan}Motherboard",
+            "keyColor": "yellow"
         },
         {
             "type": "cpu",
-            "key": "     ➜  {#36}CPU",
-            "keyColor": "33",
+            "format": "{1}",
+            "key": "     ➜  {#cyan}CPU",
+            "keyColor": "yellow"
         },
         {
             "type": "gpu",
             "format": "{2}",
-            "key": "   󰢮  ➜  {#36}GPU",
-            "keyColor": "33",
+            "key": "   󰢮  ➜  {#cyan}GPU",
+            "keyColor": "yellow"
         },
         {
             "type": "display",
             "compactType": "scaled",
-            "key": "     ➜  {#36}Displays",
-            "keyColor": "33",
+            "key": "     ➜  {#cyan}Displays",
+            "keyColor": "yellow"
         },
         {
             "type": "memory",
             "format": "   {4} {1} / {2}",
-            "key": "   󰑭  ➜  {#36}Memory",
-            "keyColor": "33",
+            "key": "   󰑭  ➜  {#cyan}Memory",
+            "keyColor": "yellow"
         },
         {
             "type": "disk",
             "format": "{13} {1} / {2}",
-            "key": "     ➜  {#36}Disk ({mountpoint:1}:)",
-            "keyColor": "33",
+            "key": "     ➜  {#cyan}Disk ({mountpoint:1}:)",
+            "keyColor": "yellow",
             "showExternal": false
         },
         {
             "type": "battery",
             "format": "  {10} {5}",
-            "key": "     ➜  {#36}Battery",
-            "keyColor": "33",
+            "key": "     ➜  {#cyan}Battery",
+            "keyColor": "yellow"
         },
         "break",
-        // {
-        //     "type": "custom",
-        //     "format": "\u001b[33m├──────────────── Location Information ────────────────┤"
-        // },
         {
             "type": "custom",
-            "format": "\u001b[33m╭──────────────── Location Information ────────────────╮"
+            "format": "\u001b[{#yellow}╭───────────────── Location Information ─────────────────╮"
         },
         "break",
         {
             "type": "publicip",
-            "key": "   󰩠  ➜  {#36}Public IP",
-            "keyColor": "33"
+            "key": "   󰩠  ➜  {#cyan}Public IP",
+            "keyColor": "yellow"
         },
         {
             "type": "localip",
-            "key": "   󰩟  ➜  {#36}Local IP",
-            "keyColor": "33",
+            "key": "   󰩟  ➜  {#cyan}Local IP",
+            "keyColor": "yellow"
         },
-        "break",
-        // {
-        //     "type": "custom",
-        //     "format": "\u001b[33m╰────────────── \u001b[30m●  \u001b[31m●  \u001b[32m●  \u001b[33m●  \u001b[34m●  \u001b[35m●  \u001b[36m●  \u001b[37m● \u001b[33m────────────────╯"
-        // },
         "break"
     ]
 }

@@ -135,18 +135,19 @@
           "properties": {
             "cache_duration": "none"
           },
-          "template": " \ue753 {{ .Full }} ",
+          "template": " \ue753 {{ if .Error }}???{{ else }}{{ .Full }}{{ end }} ",
           "foreground": "p:foregroundDark",
           "powerline_symbol": "\ue0b0",
           "background": "p:blue",
           "type": "angular",
+          "fetch_version": true,
           "style": "powerline"
         },
         {
           "properties": {
             "cache_duration": "none"
           },
-          "template": " \ue718 {{ .Full }} ",
+          "template": " \ue718 {{ if .Error }}???{{ else }}{{ .Full }}{{ end }} ",
           "foreground": "p:foregroundDark",
           "powerline_symbol": "\ue0b0",
           "background": "p:blue",
@@ -197,43 +198,6 @@
             "{{ if gt .Ahead 0 }}p:purple{{ end }}",
             "{{ if gt .Behind 0 }}p:purpleAlt{{ end }}"
           ]
-        }
-      ]
-    },
-    {
-      "type": "prompt",
-      "alignment": "right",
-      "segments": [
-        {
-          "properties": {
-            "always_enabled": true,
-            "cache_duration": "none"
-          },
-          "leading_diamond": "\ue0b6",
-          "template": " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} ",
-          "foreground": "p:foregroundDark",
-          "background": "p:green",
-          "type": "status",
-          "style": "diamond",
-          "foreground_templates": [
-            "{{ if gt .Code 0 }}p:foregroundLight{{ end }}"
-          ],
-          "background_templates": [
-            "{{ if gt .Code 0 }}p:red{{ end }}"
-          ]
-        },
-        {
-          "properties": {
-            "cache_duration": "none",
-            "style": "roundrock",
-            "threshold": 0
-          },
-          "trailing_diamond": "\ue0b4",
-          "template": "{{ if ne .Env.TERM_PROGRAM \"vscode\" }} \udb84\udfab {{ .FormattedMs }} {{ end }}",
-          "foreground": "p:foregroundLight",
-          "background": "p:black",
-          "type": "executiontime",
-          "style": "diamond"
         }
       ]
     },
