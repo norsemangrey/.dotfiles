@@ -134,6 +134,17 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
 # Load Syntax Highlighting plugin
 source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+# +-----+
+# | FZF |
+# +-----+
+
+# Check if the fzf key bindings and completion script exists and source it if it does
+[ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
+[ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
+
+# Load FZF Tab Completion plugin
+source ~/.config/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
+
 # +--------+
 # | PROMPT |
 # +--------+
