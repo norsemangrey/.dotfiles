@@ -1,0 +1,89 @@
+# Set history length
+set -g history-limit 100000
+
+# Change TMUX command prefix keys (Ctrl+Space)
+unbind C-b
+set -g prefix C-Space
+
+# Set TMUX reload keys
+unbind r
+bind r source-file ~/.tmux.conf \; display "Reloaded TMUX Configuration"
+
+# Enable mouse mode
+set -g mouse on
+
+# PANES
+
+# Set start index to 1
+set -g pane-base-index 1
+
+# Unbind new keys in case they are used by something else
+unbind v
+unbind h
+
+# Ubind current keys
+unbind %
+unbind '"'
+
+# Set new keys for new pane (vertical and horizontal split)
+bind v split-window -h -c "#{pane_currnet_path}"
+bind h split-window -v -c "#{pane_currnet_path}"
+
+# WINDOWS
+
+# Set start index to 1
+set -g base-index 1
+
+# pane border
+set-option -g pane-border-style fg=white #base2
+set-option -g pane-active-border-style fg=brightcyan #base1
+
+# message text
+set-option -g message-style fg=brightred,bg=white #orange and base2
+
+# pane number display
+set-option -g display-panes-active-colour blue #blue
+set-option -g display-panes-colour brightred #orange
+
+
+# clock
+set-window-option -g clock-mode-colour green #green
+
+# bell
+set-window-option -g window-status-bell-style fg=white,bg=red #base2, red
+
+set-option -g status "on"
+
+# Default statusbar color
+set-option -g status-style bg=default,fg=colour223 # bg=bg1, fg=fg1
+
+# Default window title colors
+set-window-option -g window-status-style bg=default,fg=colour237 # bg=yellow, fg=bg1
+
+# Default window with an activity alert
+set-window-option -g window-status-activity-style bg=default,fg=colour248 # bg=bg1, fg=fg3
+
+# Active window title colors
+set-window-option -g window-status-current-style bg=default,fg=colour237 # fg=bg1
+
+set-option -g status-left "\
+#[fg=colour7, bg=colour241]#{?client_prefix,#[bg=colour167],} ❐ #S \
+#[fg=colour241, bg=default]#{?client_prefix,#[fg=colour167],}#{?window_zoomed_flag, 🔍,}"
+
+set-window-option -g window-status-current-format "\
+#[fg=color214, bg=default]\
+#[fg=default, bg=colour214] #I* \
+#[fg=colour239, bg=colour214, bold] #W \
+#[fg=colour214, bg=default]"
+
+set-option -g status-right "\
+#[fg=colour214, bg=default] \
+#[fg=colour246, bg=default]  %b %d '%y\
+#[fg=colour109]  %H:%M \
+#[fg=colour248, bg=colour239]"
+
+set-window-option -g window-status-format "\
+#[fg=color239,bg=defautl,noitalics]\
+#[fg=colour223,bg=colour239] #I \
+#[fg=colour223, bg=colour239] #W \
+#[fg=colour239, bg=default]"

@@ -118,13 +118,13 @@
         },
         {
             "type": "swap",
-            "key": "   󰓡  ➜  {#36}Swap",
+            "key": "   󰓡  ➜  {#36}Swap  ",
             "keyColor": "33"
         },
         {
             "type": "disk",
             "format": "{13} {1} / {2}",
-            "key": "   󰋊  ➜  {#36}Disk",
+            "key": "   󰋊  ➜  {#36}Disk  ",
             "keyColor": "33",
             "showExternal": false,
             "showHidden": false,
