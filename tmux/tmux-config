@@ -1,5 +1,15 @@
+set -g @BACKGROUND_COLOR "#EEE8D5"
+
 # Set history length
 set -g history-limit 100000
+
+# Ensure that TMUX uses true color
+set-option -g default-terminal "tmux-256color"
+set-option -sa terminal-overrides ",xterm-256color:Tc"
+
+#+--------------+
+#+ KEY BINDINGS +
+#+--------------+
 
 # Change TMUX command prefix keys (Ctrl+Space)
 unbind C-b
@@ -7,83 +17,134 @@ set -g prefix C-Space
 
 # Set TMUX reload keys
 unbind r
-bind r source-file ~/.tmux.conf \; display "Reloaded TMUX Configuration"
-
-# Enable mouse mode
-set -g mouse on
-
-# PANES
-
-# Set start index to 1
-set -g pane-base-index 1
+bind r source-file $XDG_CONFIG_HOME/tmux/tmux.conf \; display "Reloaded TMUX Configuration"
 
 # Unbind new keys in case they are used by something else
 unbind v
 unbind h
 
-# Ubind current keys
+# Unbind current keys
 unbind %
 unbind '"'
 
 # Set new keys for new pane (vertical and horizontal split)
-bind v split-window -h -c "#{pane_currnet_path}"
-bind h split-window -v -c "#{pane_currnet_path}"
+bind v split-window -h -c "#{pane_current_path}"
+bind h split-window -v -c "#{pane_current_path}"
 
-# WINDOWS
+# Set key for synchronizing panes
+bind-key y set-window-option synchronize-panes\; display-message "Synchronize mode toggled!"
+
+# Enable mouse mode
+set -g mouse on
+
+#+----------+
+#+ MESSAGES +
+#+----------+
+
+set -g message-style bg="$BACKGROUND_COLOR",fg=yellow
+set -g message-command-style bg="$BACKGROUND_COLOR",fg=yellow
+
+#+------------+
+#+ CLOCK MODE +
+#+------------+
+
+setw -g clock-mode-colour green
+
+#+---------+
+#+ WINDOWS +
+#+---------+
+
+# Set start index to 1 and renumber on closing
+set -g base-index 1
+set -g renumber-windows on
+
+#+-------+
+#+ PANES +
+#+-------+
 
 # Set start index to 1
-set -g base-index 1
+set -g pane-base-index 1
 
-# pane border
-set-option -g pane-border-style fg=white #base2
-set-option -g pane-active-border-style fg=brightcyan #base1
+set -g pane-border-style bg=default,fg=green
+set -g pane-active-border-style bg=default,fg=brightgreen
 
-# message text
-set-option -g message-style fg=brightred,bg=white #orange and base2
+#+------------+
+#+ STATUS BAR +
+#+------------+
 
-# pane number display
-set-option -g display-panes-active-colour blue #blue
-set-option -g display-panes-colour brightred #orange
+#+--- Layout ---+
 
+set -g status-justify left
 
-# clock
-set-window-option -g clock-mode-colour green #green
+set -g status-right-length 80
+set -g status-left-length 80
 
-# bell
-set-window-option -g window-status-bell-style fg=white,bg=red #base2, red
+#+--- Colors ---+
 
-set-option -g status "on"
+set -g status-style bg="$BACKGROUND_COLOR",fg=white
 
-# Default statusbar color
-set-option -g status-style bg=default,fg=colour223 # bg=bg1, fg=fg1
+#+--- Left Bar ---+
 
-# Default window title colors
-set-window-option -g window-status-style bg=default,fg=colour237 # bg=yellow, fg=bg1
+set -g status-left "\
+#[fg=black,bg=$BACKGROUND_COLOR]\
+#[fg=$BACKGROUND_COLOR,bg=black] #H \
+#[fg=black,bg=$BACKGROUND_COLOR]\
+#[fg=$BACKGROUND_COLOR,bg=brightblue]\
+#[fg=$BACKGROUND_COLOR,bg=brightblue] #S (#I.#P) \
+#[fg=brightblue,bg=$BACKGROUND_COLOR]"
 
-# Default window with an activity alert
-set-window-option -g window-status-activity-style bg=default,fg=colour248 # bg=bg1, fg=fg3
+#+--- Windows Bar ---+
 
-# Active window title colors
-set-window-option -g window-status-current-style bg=default,fg=colour237 # fg=bg1
+set -g window-status-format "\
+#[fg=$BACKGROUND_COLOR,bg=$BACKGROUND_COLOR] \
+#[fg=white,bg=$BACKGROUND_COLOR]#I #[fg=white,bg=$BACKGROUND_COLOR] \
+#[fg=white,bg=$BACKGROUND_COLOR]#W #F #[fg=$BACKGROUND_COLOR,bg=$BACKGROUND_COLOR]"
 
-set-option -g status-left "\
-#[fg=colour7, bg=colour241]#{?client_prefix,#[bg=colour167],} ❐ #S \
-#[fg=colour241, bg=default]#{?client_prefix,#[fg=colour167],}#{?window_zoomed_flag, 🔍,}"
+set -g window-status-current-format "\
+#[fg=$BACKGROUND_COLOR,bg=green] \
+#[fg=black,bg=green,bold]#I #[fg=black,bg=green,nobold] \
+#[fg=black,bg=green]#W #F #[fg=green,bg=$BACKGROUND_COLOR]"
 
-set-window-option -g window-status-current-format "\
-#[fg=color214, bg=default]\
-#[fg=default, bg=colour214] #I* \
-#[fg=colour239, bg=colour214, bold] #W \
-#[fg=colour214, bg=default]"
+set -g window-status-separator ""
 
-set-option -g status-right "\
-#[fg=colour214, bg=default] \
-#[fg=colour246, bg=default]  %b %d '%y\
-#[fg=colour109]  %H:%M \
-#[fg=colour248, bg=colour239]"
+#+--- Right Bar ---+
 
-set-window-option -g window-status-format "\
-#[fg=color239,bg=defautl,noitalics]\
-#[fg=colour223,bg=colour239] #I \
-#[fg=colour223, bg=colour239] #W \
-#[fg=colour239, bg=default]"
+set -g status-right "\
+#{prefix_highlight}#[fg=brightwhite,bg=$BACKGROUND_COLOR]\
+#[fg=$BACKGROUND_COLOR,bg=brightwhite,bold] 󰲝 #(hostname -I)\
+#[fg=$BACKGROUND_COLOR,bg=brightwhite]\
+#[fg=$BACKGROUND_COLOR,bg=brightwhite]  #{ip_address} \
+#[fg=$BACKGROUND_COLOR,bg=brightwhite]\
+#[fg=white,bg=$BACKGROUND_COLOR] %a %Y-%m-%d \
+#[fg=white,bg=$BACKGROUND_COLOR]\
+#[fg=white,bg=$BACKGROUND_COLOR] %H:%M\
+#[fg=$BACKGROUND_COLOR,bg=$BACKGROUND_COLOR]"
+
+#+--- Plugin Support ---+
+
+# TMUX Prefix Highlight
+
+set -g @prefix_highlight_output_prefix "\
+#[fg=red]#[bg="$BACKGROUND_COLOR"]\
+#[bg=red]#[fg="$BACKGROUND_COLOR"] "
+
+set -g @prefix_highlight_output_suffix " "
+
+set -g @prefix_highlight_copy_mode_attr "fg=red,bg="$BACKGROUND_COLOR",bold"
+
+#+---------+
+#+ PLUGINS +
+#+---------+
+
+# Plugin Manager
+set -g @plugin 'tmux-plugins/tpm'
+#set -g @plugin 'tmux-plugins/tmux-sensible'
+
+# Status Line Plugins
+set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
+set -g @plugin 'anghootys/tmux-ip-address'
+set -g @plugin 'ofirgall/tmux-window-name'
+set -g @plugin 'joshmedeski/tmux-nerd-font-window-name'
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run '$XDG_CONFIG_HOME/tmux/plugins/tpm/tpm'

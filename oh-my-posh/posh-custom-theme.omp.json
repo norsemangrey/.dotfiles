@@ -77,14 +77,14 @@
       "segments": [
         {
           "properties": {
-            "alpine": "\uf300",
-            "arch": "\uf303",
+            "alpine": "\uf300 ",
+            "arch": "\uf303 ",
             "cache_duration": "none",
-            "centos": "\uf304",
-            "debian": "\uf306",
-            "linux": "\ue712",
-            "ubuntu": "\uf31c",
-            "windows": "\ue70f"
+            "centos": "\uf304 ",
+            "debian": "\uf306 ",
+            "linux": "\ue712 ",
+            "ubuntu": "\uf31c ",
+            "windows": "\ue70f "
           },
           "leading_diamond": "\ue0b6",
           "template": " {{ if .WSL }}\ue712 on {{ end }}{{ .Icon }} ",
@@ -92,6 +92,26 @@
           "background": "p:black",
           "type": "os",
           "style": "diamond"
+        },
+        {
+          "type": "session",
+          "style": "diamond",
+          "foreground": "p:black",
+          "background": "p:whiteAlt",
+          "leading_diamond": "",
+          "trailing_diamond": "",
+          "template": "{{ if .SSHSession }} {{ end }}{{ .HostName }} "
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": " \uf09c ",
+          "foreground": "p:foregroundDark",
+          "background": "p:red",
+          "type": "root",
+          "style": "diamond",
+          "trailing_diamond": ""
         },
         {
           "properties": {
@@ -110,60 +130,49 @@
         },
         {
           "properties": {
-            "cache_duration": "none"
-          },
-          "template": " \uf09c admin ",
-          "foreground": "p:foregroundDark",
-          "powerline_symbol": "\ue0b0",
-          "background": "p:red",
-          "type": "root",
-          "style": "powerline"
-        },
-        {
-          "properties": {
             "cache_duration": "none",
             "display_mode": "context"
           },
-          "template": " \ue73c {{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }} ",
+          "template": " \ue73c {{ if .Venv }}{{ .Venv }} {{ end }}{{ .Major}}.{{.Minor }} ",
           "foreground": "p:foregroundDark",
-          "powerline_symbol": "\ue0b0",
           "background": "p:blue",
           "type": "python",
-          "style": "powerline"
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0"
         },
         {
           "properties": {
             "cache_duration": "none"
           },
-          "template": " \ue753 {{ if .Error }}???{{ else }}{{ .Full }}{{ end }} ",
+          "template": " \ue753 {{ if .Error }}???{{ else }}{{ .Major}}.{{.Minor }}{{ end }} ",
           "foreground": "p:foregroundDark",
-          "powerline_symbol": "\ue0b0",
           "background": "p:blue",
           "type": "angular",
           "fetch_version": true,
-          "style": "powerline"
+          "style": "diamond",
+          "trailing_diamond": "<p:foregroundDark,p:blue></>"
         },
         {
           "properties": {
             "cache_duration": "none"
           },
-          "template": " \ue718 {{ if .Error }}???{{ else }}{{ .Full }}{{ end }} ",
+          "template": " \ue718 {{ if .Error }}???{{ else }}{{ .Major}}.{{.Minor }}{{ end }} ",
           "foreground": "p:foregroundDark",
-          "powerline_symbol": "\ue0b0",
           "background": "p:blue",
           "type": "node",
-          "style": "powerline"
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0"
         },
         {
           "properties": {
             "cache_duration": "none"
           },
-          "template": " \ue77f  {{ .Full }} ",
+          "template": " \ue77f {{ if .Error }}???{{ else }}{{ .Major}}.{{.Minor }}{{ end }} ",
           "foreground": "p:foregroundDark",
-          "powerline_symbol": "\ue0b0",
           "background": "p:blue",
           "type": "dotnet",
-          "style": "powerline"
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0"
         },
         {
           "properties": {
@@ -172,10 +181,11 @@
           },
           "template": " \uf07c  {{ .Path }} ",
           "foreground": "p:foregroundDark",
-          "powerline_symbol": "\ue0b0",
           "background": "p:brightGreen",
           "type": "path",
-          "style": "powerline"
+          "style": "diamond",
+          "leading_diamond": "<transparent,p:brightGreen>\ue0b0</>",
+          "trailing_diamond": "\ue0b0"
         },
         {
           "properties": {
@@ -188,10 +198,10 @@
           },
           "template": " {{ .UpstreamIcon }} {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<p:foregroundLight> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "foreground": "p:foregroundDark",
-          "powerline_symbol": "\ue0b0",
+          "trailing_diamond": "\ue0b0",
           "background": "p:green",
           "type": "git",
-          "style": "powerline",
+          "style": "diamond",
           "background_templates": [
             "{{ if or (.Working.Changed) (.Staging.Changed) }}p:green{{ end }}",
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:green{{ end }}",

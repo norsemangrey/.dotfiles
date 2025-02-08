@@ -1,0 +1,1 @@
+l tmux-config $HOME/.config/tmux/tmux.config
