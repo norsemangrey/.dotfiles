@@ -27,6 +27,13 @@ export LC_MESSAGES=en_US.UTF-8
 # Load aliases
 source ~/.config/aliases/aliases
 
+# +--------+
+# | COLORS |
+# +--------+
+
+BACKGROUND_COLOR="#EEE8D5"
+export BACKGROUND_COLOR
+
 # +---------+
 # | HISTORY |
 # +---------+

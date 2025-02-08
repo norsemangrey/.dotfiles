@@ -123,7 +123,7 @@
           },
           "template": " \uf489  {{ .Name }} {{ .Version }} ",
           "foreground": "p:foregroundDark",
-          "powerline_symbol": "\ue0b0",
+          "powerline_symbol": "",
           "background": "p:brightBlue",
           "type": "shell",
           "style": "powerline"
@@ -138,7 +138,7 @@
           "background": "p:blue",
           "type": "python",
           "style": "diamond",
-          "trailing_diamond": "\ue0b0"
+          "trailing_diamond": ""
         },
         {
           "properties": {
@@ -161,7 +161,7 @@
           "background": "p:blue",
           "type": "node",
           "style": "diamond",
-          "trailing_diamond": "\ue0b0"
+          "trailing_diamond": ""
         },
         {
           "properties": {
@@ -172,7 +172,7 @@
           "background": "p:blue",
           "type": "dotnet",
           "style": "diamond",
-          "trailing_diamond": "\ue0b0"
+          "trailing_diamond": ""
         },
         {
           "properties": {
@@ -184,8 +184,8 @@
           "background": "p:brightGreen",
           "type": "path",
           "style": "diamond",
-          "leading_diamond": "<transparent,p:brightGreen>\ue0b0</>",
-          "trailing_diamond": "\ue0b0"
+          "leading_diamond": "<transparent,p:brightGreen></>",
+          "trailing_diamond": ""
         },
         {
           "properties": {
@@ -198,7 +198,7 @@
           },
           "template": " {{ .UpstreamIcon }} {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<p:foregroundLight> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "foreground": "p:foregroundDark",
-          "trailing_diamond": "\ue0b0",
+          "trailing_diamond": "",
           "background": "p:green",
           "type": "git",
           "style": "diamond",
