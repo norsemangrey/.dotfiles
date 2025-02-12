@@ -206,8 +206,12 @@ function New-DirectoryIfMissing {
 function New-Symlink {
     param(
         [string] $linkPath,
-        [string] $targetPath
+        [string] $targetPath,
+        [string] $name
     )
+
+    # Backup folder for existing files (if not already a symlink)
+    $backupFolder = Join-Path -Path "..\.dotfiles-old-config-backup" -ChildPath $name
 
     # Check if the linkPath exists
     if (Test-Path $linkPath) {
@@ -240,6 +244,26 @@ function New-Symlink {
         } else {
 
             Write-Message "A file or directory exists in the symlink path ($linkPath) and is not a symlink. Replacing..." "INFO"
+
+            # Backup the file before deletion if it's not already a symlink
+            $backupPath = Join-Path -Path $backupFolder -ChildPath ($item.Name)
+
+            Write-Message "Backing up existing file to '$backupPath'..." "DEBUG"
+
+            # Take backup of existing file/folder
+            #if (-not $dryRun) {
+
+                # Create backup folder if it does not exist
+                if (-not (Test-Path -Path $backupFolder)) {
+
+                    New-Item -ItemType Directory -Path $backupFolder | Out-Null
+
+                }
+
+                # Copy the file to the backup folder
+                Copy-Item -Path $linkPath -Destination $backupPath
+
+            #}
 
             # It is not a symbolic link (regular file or directory)
             if ( -not $dryRun ) { Remove-Item -Path $linkPath -Force -Recurse }
@@ -274,7 +298,7 @@ function Update-Symlinks {
             Write-Message "Processing symlink paths for '$folderName'..." "INFO"
 
             # Read each line from the paths.txt
-            Get-Content -Path $pathsFile | ForEach-Object {
+            Get-Content -Path $pathsFile | Where-Object { $_.Trim() -ne "" } | ForEach-Object {
 
                 Write-Message "Processing new line ($_)" "DEBUG"
 
@@ -303,7 +327,7 @@ function Update-Symlinks {
                             New-DirectoryIfMissing -path $symlinkDir
 
                             # Create the symlink
-                            New-Symlink -linkPath $symlinkPath -targetPath $targetPath
+                            New-Symlink -linkPath $symlinkPath -targetPath $targetPath -name $folderName
 
                         } else {
 
