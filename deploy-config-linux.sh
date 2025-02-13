@@ -131,6 +131,7 @@ expandPath() {
 
 }
 
+# TODO: Might need to re-think the env setup....
 
 # Set environment variable file path
 if isWsl; then
@@ -145,7 +146,7 @@ else
 
 fi
 
-# Load environment variables
+# Load deploy related environment variables
 if [ -f "${envFile}" ]; then
 
     logMessage "Loading environment variables from file (${envFile})..." "INFO"
