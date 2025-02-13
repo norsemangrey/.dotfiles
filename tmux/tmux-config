@@ -41,8 +41,8 @@ set -g mouse on
 #+ MESSAGES +
 #+----------+
 
-set -g message-style bg="$BACKGROUND_COLOR",fg=yellow
-set -g message-command-style bg="$BACKGROUND_COLOR",fg=yellow
+set -g message-style bg=$BACKGROUND_COLOR,fg=yellow
+set -g message-command-style bg=$BACKGROUND_COLOR,fg=yellow
 
 #+------------+
 #+ CLOCK MODE +
@@ -81,7 +81,7 @@ set -g status-left-length 80
 
 #+--- Colors ---+
 
-set -g status-style bg="$BACKGROUND_COLOR",fg=white
+set -g status-style bg=$BACKGROUND_COLOR,fg=white
 
 #+--- Left Bar ---+
 
