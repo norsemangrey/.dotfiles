@@ -1,2 +1,1 @@
 l tmux-config $HOME/.config/tmux/tmux.conf
-l plugins $HOME/.config/tmux/plugins
