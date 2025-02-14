@@ -17,7 +17,6 @@
     },
     "modules": [
         "break",
-        "break",
         {
             "type": "title",
             "format": "               {1}  |    {2}",
@@ -92,6 +91,11 @@
         {
             "type": "localip",
             "key": "   󰩟  ➜  {#cyan}Local IP",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "publicip",
+            "key": "   󰩠  ➜  {#cyan}Public IP",
             "keyColor": "yellow"
         },
         "break",
