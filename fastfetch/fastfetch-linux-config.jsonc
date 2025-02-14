@@ -80,7 +80,7 @@
         },
         {
             "type": "board",
-            "format": "{2}",
+            "format": "{3}",
             "key": "     ➜  {#cyan}Hypervisor",
             "keyColor": "yellow"
         },
