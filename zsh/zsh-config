@@ -27,6 +27,9 @@ export LC_MESSAGES=en_US.UTF-8
 # Load aliases
 source ~/.config/aliases/aliases
 
+# Alias for reloading the shell configuration
+alias rl="source $ZDOTDIR/.zshrc"
+
 # +--------+
 # | COLORS |
 # +--------+
@@ -71,8 +74,12 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or po
 fpath=($ZDOTDIR/plugins/zsh-completions/src $fpath)
 
 # Initialize the completion for the current ZSH session
+# (commented out when using the zsh-autocomplete plugin)
 autoload -Uz compinit
 compinit
+
+# Allow hidden files/directories to be shown/included in completions
+_comp_options+=(globdots)
 
 # Set some general completion settings
 setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
@@ -92,7 +99,8 @@ zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
 zstyle ':completion:*' auto-description 'specify: %d'
 
 # Enables menu selection, allowing to scroll through options with arrow keys
-zstyle ':completion:*' menu select
+# (set to 'no' to disable menu selection when using fzf-tab)
+zstyle ':completion:*' menu no
 
 # Groups the different type of matches under their description
 zstyle ':completion:*' group-name ''
@@ -112,17 +120,31 @@ zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-d
 # Retains the prefix typed by the user in the completion suggestions
 zstyle ':completion:*' keep-prefix true
 
-# Dynamically generates a list of host-names for use with commands like 'ssh', 'scp', 'sftp', 'rsh', and 'rsync'.
-zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+# Better SSH/Rsync/SCP Autocomplete
+zstyle ':completion:*:(ssh|scp|ftp|sftp):*' hosts $hosts
 
 # Customizes the prompt shown when the list of completions is truncated.
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
 
 # Customizes colors for different types of completion descriptions and warnings
-zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
-zstyle ':completion:*:*:*:*:descriptions' format '%F{blue}-- %D %d --%f'
-zstyle ':completion:*:*:*:*:messages' format ' %F{purple} -- %d --%f'
-zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
+zstyle ':completion:*:descriptions' format '[%d]'
+
+# +-----------------+
+# | AUTO COMPLETION |
+# +----------------+
+
+# Load Auto-Suggestions plugin
+#(in addition to the ZSH completion system)
+#source ~/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
+# Set default behavior to search backward through the command history incrementally
+#zstyle ':autocomplete:*' default-context history-incremental-search-backward
+
+# Set the minimum input length for the incremental search to trigger
+#zstyle ':autocomplete:history-incremental-search-backward:*' min-input 1
+
+# Override for history search only
+#zstyle ':autocomplete:history-incremental-search-backward:*' list-lines 10
 
 # +-------------+
 # | SUGGESTIONS |
@@ -151,6 +173,12 @@ source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Load FZF Tab Completion plugin
 source ~/.config/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
+
+# Ensure that fzf-tab uses the default options for FZF
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+
+# Preview contents when tab completing directories
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd --tree --color=always --icon=always ${realpath}'
 
 # +--------+
 # | PROMPT |
