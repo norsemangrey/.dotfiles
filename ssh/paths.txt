@@ -7,3 +7,4 @@ w $Env:DOTFILES_WORK\ssh\ssh-known_hosts.work $Env:USERPROFILE\.ssh\known_hosts.
 l ssh-config $HOME/.ssh/config
 l $DOTFILES_CLOUD/ssh/keys $HOME/.ssh/keys
 l $DOTFILES_CLOUD/ssh/ssh-config.other $HOME/.ssh/config.other
+l $DOTFILES_CLOUD/ssh/ssh-config.home $HOME/.ssh/config.home
