@@ -21,6 +21,13 @@ export LC_COLLATE=en_US.UTF-8
 export LC_MESSAGES=en_US.UTF-8
 
 # +---------+
+# | SCRIPTS |
+# +---------+
+
+# Load ZSH scripts
+source $ZDOTDIR/scripts.zsh
+
+# +---------+
 # | ALIASES |
 # +---------+
 
@@ -68,6 +75,9 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or po
 # +------------+
 # | COMPLETION |
 # +------------+
+
+# Clone or update plugin
+cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-completions"
 
 # Include the completions from the zsh-completions package
 # Loads additional completion definitions from the plugin (but not required)
@@ -133,9 +143,12 @@ zstyle ':completion:*:descriptions' format '[%d]'
 # | AUTO COMPLETION |
 # +----------------+
 
+# Clone or update plugin
+#cloneOrUpdatePlugin "https://github.com/marlonrichert/zsh-autocomplete"
+
 # Load Auto-Suggestions plugin
 #(in addition to the ZSH completion system)
-#source ~/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+#source $ZDOTDIR/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 # Set default behavior to search backward through the command history incrementally
 #zstyle ':autocomplete:*' default-context history-incremental-search-backward
@@ -150,8 +163,11 @@ zstyle ':completion:*:descriptions' format '[%d]'
 # | SUGGESTIONS |
 # +-------------+
 
+# Clone or update plugin
+cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-autosuggestions"
+
 # Load Auto-Suggestions plugin
-source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Set the font highlight style of the auto-suggestions
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
@@ -160,8 +176,11 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
 # | HIGHLIGHTING |
 # +--------------+
 
+# Clone or update plugin
+ cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-syntax-highlighting"
+
 # Load Syntax Highlighting plugin
-source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # +-----+
 # | FZF |
@@ -171,14 +190,31 @@ source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source   /usr/share/doc/fzf/examples/completion.zsh
 
+# Clone or update plugin
+cloneOrUpdatePlugin "https://github.com/Aloxaf/fzf-tab"
+
 # Load FZF Tab Completion plugin
-source ~/.config/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
+source $ZDOTDIR/plugins/fzf-tab/fzf-tab.plugin.zsh
 
 # Ensure that fzf-tab uses the default options for FZF
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
 
 # Preview contents when tab completing directories
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd --tree --color=always --icon=always ${realpath}'
+
+# +-----+
+# | SSH |
+# +-----+
+
+# Clone or update plugin
+cloneOrUpdatePlugin "https://github.com/sunlei/zsh-ssh"
+
+# Load SSH completion plugin
+source $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh
+
+#zstyle ':completion:*:*:ssh:*' fzf-completion yes
+
+#compdef _ssh ssh
 
 # +--------+
 # | PROMPT |

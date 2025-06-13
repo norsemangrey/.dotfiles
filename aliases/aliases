@@ -27,6 +27,13 @@ alias d='dirs -v'
 for index ({1..9}) alias "$index"="cd +${index} > /dev/null"; unset index
 
 # +---------+
+# | scripts |
+# +---------+
+
+# Run dotfiles update
+alias updot='$REPOS_PERSONAL/.dotfiles/deploy-config-linux.sh'
+
+# +---------+
 # | general |
 # +---------+
 

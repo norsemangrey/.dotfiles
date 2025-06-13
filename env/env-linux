@@ -1,6 +1,8 @@
 # Misc Paths
 export DOTFILES="$HOME/.dotfiles"
 export WORKSPACE="$HOME/workspace"
+export REPOS_PERSONAL="$HOME/workspace/personal/repos"
+export REPOS_WORK="$HOME/workspace/work/repos"
 export LOG_PATH="$HOME/logs"
 
 # XDG
