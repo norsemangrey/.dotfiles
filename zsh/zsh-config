@@ -212,9 +212,9 @@ cloneOrUpdatePlugin "https://github.com/sunlei/zsh-ssh"
 # Load SSH completion plugin
 source $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh
 
-#zstyle ':completion:*:*:ssh:*' fzf-completion yes
+zstyle ':completion:*:*:ssh:*' fzf-completion yes
 
-#compdef _ssh ssh
+compdef _ssh ssh
 
 # +--------+
 # | PROMPT |
