@@ -27,6 +27,7 @@ export LC_MESSAGES=en_US.UTF-8
 # Load ZSH scripts
 source $ZDOTDIR/scripts.zsh
 
+
 # +---------+
 # | ALIASES |
 # +---------+
@@ -34,8 +35,19 @@ source $ZDOTDIR/scripts.zsh
 # Load aliases
 source ~/.config/aliases/aliases
 
-# Alias for reloading the shell configuration
+# Cheat
+# Trigger      rl
+# Type         alias
+# Domain       shell
+# Conditional  no
+# Alternative  None
+# Function     source $ZDOTDIR/.zshrc
+# Description  Reloading the ZSH shell configuration.
+# Example      rl → runs .zshrc
+# Short        Reloads shell
+# Executable   no
 alias rl="source $ZDOTDIR/.zshrc"
+
 
 # +--------+
 # | COLORS |
@@ -207,7 +219,7 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd --tree --color=always --icon=al
 # +-----+
 
 # Clone or update plugin
-cloneOrUpdatePlugin "https://github.com/sunlei/zsh-ssh"
+cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-ssh"
 
 # Load SSH completion plugin
 source $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh
@@ -215,6 +227,21 @@ source $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh
 zstyle ':completion:*:*:ssh:*' fzf-completion yes
 
 compdef _ssh ssh
+
+
+# +--------+
+# | CHEATS |
+# +--------+
+
+# Set cheats root directory
+export ZSH_ACTIVE_CHEATSHEET_DIRS=("$HOME/.config")
+
+# Source the plugin
+cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-active-cheatsheet.git"
+
+# Load the cheatsheet plugin
+source $ZDOTDIR/plugins/zsh-active-cheatsheet/zsh-active-cheatsheet.plugin.zsh
+
 
 # +--------+
 # | PROMPT |
@@ -250,5 +277,25 @@ fastfetch
 # | KEYCHAIN |
 # +----------+
 
-# Start keychain and load SSH keys
-eval "$(keychain --eval --agents ssh ~/.ssh/keys/github_ed25519)"
+# Intialize key list
+SSH_KEYS=()
+
+# Add keys to list
+for key in ~/.ssh/keys/*_ed25519; do
+
+  # Check file and add
+  if [[ -f "$key" ]]; then
+
+    SSH_KEYS+=("$key")
+
+  fi
+
+done
+
+# Load all keys into keychain
+if [[ ${#SSH_KEYS[@]} -gt 0 ]]; then
+
+  # Start keychain and load SSH keys
+  eval $(keychain --agents ssh --quiet --eval "${SSH_KEYS[@]}")
+
+fi
