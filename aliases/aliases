@@ -4,10 +4,45 @@
 # | lsd |
 # +-----+
 
+# Cheat
+# Type        alias
+# Trigger     (l | ll)
+# Domain      shell
+# Conditional no
+# Alternative None
+# Function    lsd (-1 | -l)
+# Description Lists non-hidded files and folder in the directory
+# Example     (l | ll)  + <Enter> -> ouputs (simple | detailed) list of non-hidden items
+# Short       List non-hidden items
+# Executable  yes
 alias l='lsd -1'
 alias ll='lsd -l'
+
+# Cheat
+# Type        alias
+# Trigger     (la | lla)
+# Domain      shell
+# Conditional no
+# Alternative None
+# Function    lsd (-a1 | -al)
+# Description Lists all files and folder in the directory
+# Example     (la | lla) + <Enter> -> ouputs (simple | detailed) list of all items
+# Short       List all items
+# Executable  yes
 alias la='lsd -a1'
 alias lla='lsd -al'
+
+# Cheat
+# Type        alias
+# Trigger     lt<depth>
+# Domain      shell
+# Conditional no
+# Alternative None
+# Function    lsd --tree --depth <number>
+# Description Lists non-hidded files and folders in a tree structure down to the specified depth
+# Example     tl3 + <Enter> -> shows a tree structure of items down 3 levels from the current directory
+# Short       Tree view to depth
+# Executable  yes
 alias lt='lsd --tree'
 alias lt1='lsd --tree --depth 1'
 alias lt2='lsd --tree --depth 2'
@@ -19,8 +54,17 @@ alias lt5='lsd --tree --depth 5'
 # | zsh |
 # +-----+
 
-# Every directory visited will populate the directory stack
-# The alias will display the directories on the stack prefixed with a number
+# Cheat
+# Type        alias
+# Trigger     d
+# Domain      shell
+# Conditional no
+# Alternative None
+# Function    dirs -v
+# Description Displays indexed list of directories last visited and creates aliases
+# Example     d + <Enter> -> 3 + <Enter> -> opens directroy number 3 on the list
+# Short       Show visited directories
+# Executable  yes
 alias d='dirs -v'
 
 # Create aliases 1 to 9, which, when used, will jump directly to the corresponding directory on your stack
@@ -30,11 +74,32 @@ for index ({1..9}) alias "$index"="cd +${index} > /dev/null"; unset index
 # | scripts |
 # +---------+
 
-# Run dotfiles update
+# Cheat
+# Type        alias
+# Trigger     updot
+# Domain      shell
+# Conditional no
+# Alternative None
+# Function    deploy-config-linux.sh
+# Description Runs the script that will create/update symlinks for all dotfiles
+# Example     updot + <Enter>
+# Short       Update dotfile links
+# Executable  yes
 alias updot='$REPOS_PERSONAL/.dotfiles/deploy-config-linux.sh'
 
 # +---------+
 # | general |
 # +---------+
 
+# Cheat
+# Trigger      clr
+# Type         alias
+# Domain       shell
+# Conditional  no
+# Alternative  Ctrl+l
+# Function     clear
+# Description  Clears the screen like `clear`.
+# Example      clr + <Enter> → screen is cleared
+# Short        Clear screen
+# Executable   yes
 alias clr='clear'
