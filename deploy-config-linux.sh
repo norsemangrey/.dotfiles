@@ -6,8 +6,9 @@ usage() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "  -d, --debug             Turns on debug output messages."
-    echo "  -t, --dry-run           Simulates actions without making changes."
+    echo "  -D, --debug             Turns on debug output messages."
+    echo "  -d, --dry-run           Simulates actions without making changes."
+    echo "  -t, --test              Runs in test mode (only process 'test' directory)."
     echo "  -v, --verbose           Shows standards output from commands."
     echo "  -h, --help              Show this help message and exit."
     echo ""
@@ -21,12 +22,16 @@ usage() {
 # Parsed from command line arguments.
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -d|--debug)
+        -D|--debug)
             debug=true
             shift
             ;;
-        -t|--dry-run)
+        -d|--dry-run)
             dryRun=true
+            shift
+            ;;
+        -t|--test)
+            testMode=true
             shift
             ;;
         -v|--verbose)
@@ -67,9 +72,23 @@ if [[ $(type -t logMessage) != function ]]; then
 
 fi
 
+# Use verbose logging
+logVerbose() {
+
+    # Check if verbose flag is set
+    if [[ "${verbose}" == "true" ]]; then
+
+        # Call logger and pass message
+        logMessage "$1" "${2:-INFO}"
+
+    fi
+
+}
+
 # Redirect output functions if not debug enabled
 run() {
 
+    # Check if verbose flag is set
     if [[ "${verbose}" == "true" ]]; then
 
         "$@"
@@ -174,47 +193,69 @@ else
 
 fi
 
-# Find and process all paths.txt files in subdirectories
-find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
+# Function to handle either secure copy or symlink creation
+processItem() {
 
-    # Set current app directory
-    appPath=$(dirname "$pathsFile")
-    appDirectory=$(basename "$appPath")
+    local targetPath="$1"
+    local destinationPath="$2"
+    local symlinkPath="$2"
+    local copyMode="$3"
 
-    logMessage "Processing symlink paths for '${appDirectory}'..." "INFO"
+    # Check if secure copy mode
+    if [[ "${copyMode}" == "true" ]]; then
 
-    # Process only lines starting with "l "
-    grep '^l' "${pathsFile}" | while IFS= read -r line; do
+        # In copy mode, check read permission on source before copying
+        if [[ ! -r "${targetPath}" ]]; then
 
-        # Extract source and target paths (remove the "l " prefix)
-        targetPathRaw=$(echo "$line" | awk '{print $2}')
-        symlinkPathRaw=$(echo "$line" | awk '{print $3}')
+            logMessage "No read permission on source '${targetPath}'. Skipping copy." "ERROR"
 
-        # Resolve/expand initial absolute and relative paths
-        targetPathAbsolute=$(expandPath "${targetPathRaw}" "${appPath}")
+            return
 
-        # Verify/test target path
+        fi
 
-        # Check if the target path is an existing absolute path
-        if [[ -e "${targetPathAbsolute}" ]]; then
+        # If target is a directory, check execute permission as well (to access contents)
+        if [[ -d "${targetPath}" && ! -x "${targetPath}" ]]; then
 
-            targetPath="${targetPathAbsolute}"
+            logMessage "No execute permission on directory '${targetPath}'. Skipping copy." "ERROR"
 
+            return
+
+        fi
+
+        # If destination already exists, skip copy and permission changes
+        if [[ -e "${destinationPath}" ]]; then
+
+            logVerbose "Destination already exists (${destinationPath}). Skipping copy." "INFO"
+
+        # Otherwise copy and set restrictive permissions
         else
 
-            logMessage "Incorrect formatted target path (${targetPathRaw}), missing envs, or path (${targetPathAbsolute}) does not exist." "ERROR"
+            logMessage "Copying with user-only permissions: ${destinationPath} <- ${targetPath}" "INFO"
 
-            continue
+            # Copy and set permissions
+            if [[ "${dryRun}" != "true" ]]; then
+
+                # Copy target file to destination
+                cp -a "${targetPath}" "${destinationPath}"
+
+                # Set permissions (user read/write only)
+                if [[ -d "${destinationPath}" ]]; then
+
+                    # Set directory permissions
+                    chmod -R 700 "${destinationPath}"
+
+                else
+
+                    # Set file permissions
+                    chmod 600 "${destinationPath}"
+
+                fi
+
+            fi
 
         fi
 
-        # Resolve/expand symlink path
-        symlinkPath=$(expandPath "${symlinkPathRaw}" "${appPath}")
-
-        # Create parent directory for symlink if necessary
-        if [[ "${dryRun}" != "true" ]]; then
-            mkdir -p "$(dirname "${symlinkPath}")"
-        fi
+    else
 
         # Check if an item already exists (file, directory, or symlink, even broken symlink)
         if [[ -e "${symlinkPath}" || -L "${symlinkPath}" ]]; then
@@ -237,9 +278,9 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
 
                 else
 
-                    logMessage "Symlink already exists (${symlinkPath}) and points to the correct target (${targetPath})" "INFO"
+                    logVerbose "Symlink already exists (${symlinkPath}) and points to the correct target (${targetPath})" "INFO"
 
-                    continue
+                    return
 
                 fi
 
@@ -261,7 +302,114 @@ find "${dotfilesDirectory}" -type f -name "paths.txt" | while IFS= read -r paths
             ln -s "${targetPath}" "${symlinkPath}"
         fi
 
-        logMessage "Creating new symlink: ${symlinkPath} -> ${targetPath}" "INFO"
+        logMessage "Creating new symlink: ${symlinkPath} => ${targetPath}" "INFO"
+
+    fi
+
+}
+
+# Check if in test mode
+if [[ "${testMode}" == "true" ]]; then
+
+    # Set serch path to test directory
+    searchPath="${dotfilesDirectory}/test"
+
+    logMessage "Running in test mode. Only processing paths in: ${testDirectory}" "INFO"
+
+else
+
+    # Use normal search path
+    searchPath="${dotfilesDirectory}"
+
+fi
+
+# Find and process all paths.txt files in subdirectories
+find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
+
+    # Get the application path by stripping the filename
+    appPath=$(dirname "$pathsFile")
+
+    # Extract the last directory name from the application path
+    appDirectory=$(basename "$appPath")
+
+    logMessage "Processing paths for '${appDirectory}'..." "INFO"
+
+    # Process only lines starting with "l "
+    grep '^l' "${pathsFile}" | while IFS= read -r line; do
+
+        # Extract target, destination, and mode columns from the line
+        targetPathRaw=$(echo "${line}" | awk '{print $2}')
+        symlinkPathRaw=$(echo "${line}" | awk '{print $3}')
+        mode=$(echo "${line}" | awk '{print $4}')
+
+        # Set secure copy mode if the mode column is "*" (copy and set permissions instead of symlink)
+        copySecureMode=false
+        [[ "${mode}" == "*" ]] && copySecureMode=true
+
+        # Handle wildcard target paths (i.e. handle directory contents only, not parent directory)
+        handleContentOnly=false
+        [[ "${targetPathRaw}" == *"*" ]] && handleContentOnly=true
+
+        # Resolve/expand initial absolute and relative paths (stripping trailing '*' only if present)
+        targetPathAbsolute=$(expandPath "${targetPathRaw%\*}" "${appPath}")
+        symlinkPath=$(expandPath "${symlinkPathRaw}" "${appPath}")
+
+        # Verify/test target path
+
+        # Check if the target path is an existing absolute path
+        if [[ -e "${targetPathAbsolute}" ]]; then
+
+            targetPath="${targetPathAbsolute}"
+
+        else
+
+            logMessage "Incorrect formatted target path (${targetPathRaw}), missing envs, or path (${targetPathAbsolute}) does not exist." "ERROR"
+
+            continue
+
+        fi
+
+        # Set parent directory based on directory handling method
+        parentDirectory=$([[ "$handleContentOnly" == "true" ]] && echo "$symlinkPath" || echo "$(dirname "$symlinkPath")")
+
+        # Check if parent directory exists
+        if [[ ! -e "${parentDirectory}" ]]; then
+
+            logMessage "Creating parent directory '${parentDirectory}'..." "INFO"
+
+            # Ensure that parent directory exists
+            if [[ "${dryRun}" != "true" ]]; then
+                mkdir -p "${parentDirectory}"
+            fi
+
+        fi
+
+        # Handle wildcard target paths
+        if [[ "${handleContentOnly}" == "true" ]]; then
+
+            # Check read and execute permission on directory before listing
+            if [[ ! -r "$targetPathAbsolute" || ! -x "$targetPathAbsolute" ]]; then
+
+                logMessage "No read/execute permission on directory '${targetPathAbsolute}'. Skipping its contents." "ERROR"
+
+            else
+
+                # Process each file/item in the expanded directory
+                for item in "$targetPathAbsolute"/*; do
+
+                    # Process item
+                    processItem "${item}" "${symlinkPath}/$(basename "${item}")" "${copySecureMode}"
+
+                done
+
+            fi
+
+        else
+
+            # Process the single item
+            processItem "${targetPathAbsolute}" "${symlinkPath}" "${copySecureMode}"
+
+        fi
 
     done
 
