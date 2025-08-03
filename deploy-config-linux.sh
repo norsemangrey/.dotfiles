@@ -235,6 +235,8 @@ processItem() {
             # Copy and set permissions
             if [[ "${dryRun}" != "true" ]]; then
 
+                # TODO: Consider rsync instead of copy
+
                 # Copy target file to destination
                 cp -a "${targetPath}" "${destinationPath}"
 
@@ -345,6 +347,8 @@ find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
         # Set secure copy mode if the mode column is "*" (copy and set permissions instead of symlink)
         copySecureMode=false
         [[ "${mode}" == "*" ]] && copySecureMode=true
+
+        # TODO: Consider a filter option instead of all folder content (e.g. <string>* or *<string>)
 
         # Handle wildcard target paths (i.e. handle directory contents only, not parent directory)
         handleContentOnly=false

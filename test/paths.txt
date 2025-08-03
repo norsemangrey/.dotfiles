@@ -1,0 +1,13 @@
+l test-file-for-copy.txt $HOME/.config/test/im-a-copy-of-test-file-for-copy.txt *
+l test-file-no-extension $HOME/.config/test/im-a-symlink-to-test-file-no-extension
+l test-file-with-extension.txt $HOME/.config/test/im-a-symlink-to-test-file-with-extension.txt
+l test-directory-for-content-copy-1/* $HOME/.config/test/im-a-directory-for-content-of-test-directory-for-content *
+l test-directory-for-content-copy-2/* $HOME/.config/test/im-a-directory-for-content-of-test-directory-for-content *
+l test-directory-for-content-symlink/* $HOME/.config/test/im-a-directory-for-content-of-test-directory-for-content
+l test-directory-for-direct-copy $HOME/.config/test/im-a-copy-of-test-directory-for-direct-copy *
+l test-directory-for-direct-symlink $HOME/.config/test/im-a-symlink-to-test-directory-for-direct-symlink
+l test-file-that-does-not-exist.txt $HOME/.config/test/im-a-symlink-to-a-test-file-that-does-not-exist.txt
+l test-directory-that-does-not-exist $HOME/.config/test/im-a-copy-of-a-test-directory-that-does-not-exist *
+l /etc/shadow $HOME/.config/test/im-a-file-that-should-not-exist-unless-script-run-as-root.txt *
+l /etc/sudoers $HOME/.config/test/im-a-symlink-to-a-file-with-root-permissions.txt
+l /root/* $HOME/.config/test/im-a-directory-that-should-be-empty-unless-script-run-as-root
