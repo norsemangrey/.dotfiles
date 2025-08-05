@@ -21,11 +21,33 @@ export LC_COLLATE=en_US.UTF-8
 export LC_MESSAGES=en_US.UTF-8
 
 # +---------+
+# | SCRIPTS |
+# +---------+
+
+# Load ZSH scripts
+source $ZDOTDIR/scripts.zsh
+
+
+# +---------+
 # | ALIASES |
 # +---------+
 
 # Load aliases
 source ~/.config/aliases/aliases
+
+# Cheat
+# Trigger      rl
+# Type         alias
+# Domain       shell
+# Conditional  no
+# Alternative  None
+# Function     source $ZDOTDIR/.zshrc
+# Description  Reloading the ZSH shell configuration.
+# Example      rl → runs .zshrc
+# Short        Reloads shell
+# Executable   no
+alias rl="source $ZDOTDIR/.zshrc"
+
 
 # +--------+
 # | COLORS |
@@ -66,13 +88,20 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or po
 # | COMPLETION |
 # +------------+
 
+# Clone or update plugin
+cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-completions"
+
 # Include the completions from the zsh-completions package
 # Loads additional completion definitions from the plugin (but not required)
 fpath=($ZDOTDIR/plugins/zsh-completions/src $fpath)
 
 # Initialize the completion for the current ZSH session
+# (commented out when using the zsh-autocomplete plugin)
 autoload -Uz compinit
 compinit
+
+# Allow hidden files/directories to be shown/included in completions
+_comp_options+=(globdots)
 
 # Set some general completion settings
 setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
@@ -92,7 +121,8 @@ zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
 zstyle ':completion:*' auto-description 'specify: %d'
 
 # Enables menu selection, allowing to scroll through options with arrow keys
-zstyle ':completion:*' menu select
+# (set to 'no' to disable menu selection when using fzf-tab)
+zstyle ':completion:*' menu no
 
 # Groups the different type of matches under their description
 zstyle ':completion:*' group-name ''
@@ -112,24 +142,44 @@ zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-d
 # Retains the prefix typed by the user in the completion suggestions
 zstyle ':completion:*' keep-prefix true
 
-# Dynamically generates a list of host-names for use with commands like 'ssh', 'scp', 'sftp', 'rsh', and 'rsync'.
-zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+# Better SSH/Rsync/SCP Autocomplete
+zstyle ':completion:*:(ssh|scp|ftp|sftp):*' hosts $hosts
 
 # Customizes the prompt shown when the list of completions is truncated.
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
 
 # Customizes colors for different types of completion descriptions and warnings
-zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
-zstyle ':completion:*:*:*:*:descriptions' format '%F{blue}-- %D %d --%f'
-zstyle ':completion:*:*:*:*:messages' format ' %F{purple} -- %d --%f'
-zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
+zstyle ':completion:*:descriptions' format '[%d]'
+
+# +-----------------+
+# | AUTO COMPLETION |
+# +----------------+
+
+# Clone or update plugin
+#cloneOrUpdatePlugin "https://github.com/marlonrichert/zsh-autocomplete"
+
+# Load Auto-Suggestions plugin
+#(in addition to the ZSH completion system)
+#source $ZDOTDIR/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
+# Set default behavior to search backward through the command history incrementally
+#zstyle ':autocomplete:*' default-context history-incremental-search-backward
+
+# Set the minimum input length for the incremental search to trigger
+#zstyle ':autocomplete:history-incremental-search-backward:*' min-input 1
+
+# Override for history search only
+#zstyle ':autocomplete:history-incremental-search-backward:*' list-lines 10
 
 # +-------------+
 # | SUGGESTIONS |
 # +-------------+
 
+# Clone or update plugin
+cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-autosuggestions"
+
 # Load Auto-Suggestions plugin
-source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Set the font highlight style of the auto-suggestions
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
@@ -138,8 +188,11 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
 # | HIGHLIGHTING |
 # +--------------+
 
+# Clone or update plugin
+ cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-syntax-highlighting"
+
 # Load Syntax Highlighting plugin
-source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # +-----+
 # | FZF |
@@ -149,8 +202,46 @@ source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source   /usr/share/doc/fzf/examples/completion.zsh
 
+# Clone or update plugin
+cloneOrUpdatePlugin "https://github.com/Aloxaf/fzf-tab"
+
 # Load FZF Tab Completion plugin
-source ~/.config/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
+source $ZDOTDIR/plugins/fzf-tab/fzf-tab.plugin.zsh
+
+# Ensure that fzf-tab uses the default options for FZF
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+
+# Preview contents when tab completing directories
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd --tree --color=always --icon=always ${realpath}'
+
+# +-----+
+# | SSH |
+# +-----+
+
+# Clone or update plugin
+cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-ssh"
+
+# Load SSH completion plugin
+source $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh
+
+zstyle ':completion:*:*:ssh:*' fzf-completion yes
+
+compdef _ssh ssh
+
+
+# +--------+
+# | CHEATS |
+# +--------+
+
+# Set cheats root directory
+export ZSH_ACTIVE_CHEATSHEET_DIRS=("$HOME/.config")
+
+# Source the plugin
+cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-active-cheatsheet.git"
+
+# Load the cheatsheet plugin
+source $ZDOTDIR/plugins/zsh-active-cheatsheet/zsh-active-cheatsheet.plugin.zsh
+
 
 # +--------+
 # | PROMPT |
@@ -186,5 +277,25 @@ fastfetch
 # | KEYCHAIN |
 # +----------+
 
-# Start keychain and load SSH keys
-eval "$(keychain --eval --agents ssh ~/.ssh/keys/github_ed25519)"
+# Intialize key list
+SSH_KEYS=()
+
+# Add keys to list
+for key in ~/.ssh/keys/*_ed25519; do
+
+  # Check file and add
+  if [[ -f "$key" ]]; then
+
+    SSH_KEYS+=("$key")
+
+  fi
+
+done
+
+# Load all keys into keychain
+if [[ ${#SSH_KEYS[@]} -gt 0 ]]; then
+
+  # Start keychain and load SSH keys
+  eval $(keychain --agents ssh --quiet --eval "${SSH_KEYS[@]}")
+
+fi

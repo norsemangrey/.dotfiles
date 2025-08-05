@@ -1,0 +1,268 @@
+### SHELL
+
+# Cheat
+Trigger      Ctrl + a
+Type         bindkey
+Domain       shell
+Conditional  no
+Alternative  Home
+Function     beginning-of-line
+Description  Move cursor (|) to beginning of command line.
+Example      echo | test → <Ctrl+E> → | echo test
+Short        Move to line start
+Executable   no
+
+# Cheat
+Trigger      Ctrl + e
+Type         bindkey
+Domain       shell
+Conditional  no
+Alternative  End
+Function     end-of-line
+Description  Move cursor (|) to end of line. Useful for editing long commands.
+Example      echo | hello → <Ctrl+E> → echo hello |
+Short        Move to line end
+Executable   no
+
+# Cheat
+Trigger      Ctrl + u
+Type         bindkey
+Domain       shell
+Conditional  no
+Alternative  None
+Function     kill-whole-line
+Description  Delete everything in the whole line regardless of cursor (|) position. Used to clear line.
+Example      echo hello | → <Ctrl+U> → |
+Short        Delete whole line
+Executable   no
+
+# Cheat
+Trigger      Ctrl + k
+Type         bindkey
+Domain       shell
+Conditional  no
+Alternative  None
+Function     kill-line
+Description  Delete everything after the cursor (|).
+Example      echo | hello → <Ctrl+K> → echo |
+Short        Delete after cursor
+Executable   no
+
+# Cheat
+Trigger      Ctrl + w
+Type         bindkey
+Domain       shell
+Conditional  no
+Alternative  Alt+Backspace (in many setups)
+Function     backward-kill-word
+Description  Delete the word before the cursor (|).
+Example      echo hello | world → <Ctrl+W> → echo | world
+Short        Delete word before
+Executable   no
+
+# Cheat
+Trigger      Ctrl + y
+Type         bindkey
+Domain       shell
+Conditional  yes
+Alternative  None
+Function     yank
+Description  Pastes the last text killed with Ctrl+U/K/W.
+Example      echo hello | → <Ctrl+W> → echo | → <Ctrl+Y> → echo hello |
+Short        Paste last deletion
+Executable   no
+
+# Cheat
+Trigger      Ctrl + l
+Type         bindkey
+Domain       shell
+Conditional  no
+Alternative  clear (cmd)
+Function     clear-screen
+Description  Clears the screen like `clear`.
+Example      <Ctrl+L> → screen is cleared
+Short        Clear screen
+Executable   yes
+
+# Cheat
+Trigger      Ctrl + d
+Type         bindkey
+Domain       shell
+Conditional  yes
+Alternative  logout / exit (cmd)
+Function     exit
+Description  Exit shell if input is empty (like logout).
+Example      on empty prompt → <Ctrl+D> → exits shell
+Short        Exit shell if empty
+Executable   yes
+
+# Cheat
+Trigger      Ctrl + r
+Type         bindkey
+Domain       shell (fzf)
+Conditional  no
+Alternative  None
+Function     history-incremental-search-backward
+Description  Interactive reverse fuzzy search in history using FZF.
+Example      echo | → <Ctrl+R> → shows previous that includes 'echo'
+Short        Fuzzy search history
+Executable   yes
+
+
+### TMUX
+
+# Cheat
+Trigger      Ctrl + SPACE
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  Customizable via .tmux.conf
+Function     prefix
+Description  The prefix key used to activate TMUX commands. Must be pressed before most other TMUX Cheats.
+Example      Press Ctrl+SPACE, then another key (e.g., " to split pane)
+Short        TMUX prefix key
+Executable   no
+
+# Cheat
+Trigger      Prefix + c
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     new-window
+Description  Creates a new TMUX window.
+Example      <Ctrl+SPACE> → <c> → new window opens
+Short        New TMUX window
+Executable   yes
+
+# Cheat
+Trigger      Prefix + v
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     split-window -v
+Description  Split the current pane vertically (top/bottom).
+Example      <Ctrl+SPACE> → <v> → splits pane vertically
+Short        Split pane vertically
+Executable   yes
+
+# Cheat
+Trigger      Prefix + h
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     split-window -h
+Description  Split the current pane horizontally (left/right).
+Example      <Ctrl+SPACE> → <h> → splits pane horizontally
+Short        Split pane horizontally
+Executable   yes
+
+# Cheat
+Trigger      Prefix + o
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     select-pane -t .+
+Description  Move to the next pane.
+Example      <Ctrl+SPACE> → <o> → cycles through panes
+Short        Next pane
+Executable   yes
+
+# Cheat
+Trigger      Prefix + <Arrows>
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     select-pane -U/D/L/R
+Description  Move to pane in arrow direction
+Example      <Ctrl+SPACE> → <Up> → move to pane in the upwards direction
+Short        Move to arrowed pane
+Executable   yes
+
+# Cheat
+Trigger      Prefix + n
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     next-window
+Description  Move to the next window.
+Example      <Ctrl+SPACE> → <n> → cycles through windows
+Short        Next TMUX window
+Executable   yes
+
+# Cheat
+Trigger      Prefix + &
+Type         bindkey
+Domain       tmux
+Conditional  yes
+Alternative  None
+Function     kill-window
+Description  Close (kill) the current window.
+Example      <Ctrl+SPACE> → <Shift+6> → prompts to confirm window kill
+Short        Kill current window
+Executable   yes
+
+# Cheat
+Trigger      Prefix + x
+Type         bindkey
+Domain       tmux
+Conditional  yes
+Alternative  None
+Function     kill-pane
+Description  Close (kill) the current pane.
+Example      <Ctrl+SPACE> → <x> → prompts to confirm pane kill
+Short        Kill current pane
+Executable   yes
+
+# Cheat
+Trigger      Prefix + d
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     detach-client
+Description  Detach from the TMUX session and return to shell.
+Example      <Ctrl+SPACE> → <d> → leaves TMUX, session continues in background
+Short        Detach from session
+Executable   yes
+
+# Cheat
+Trigger      Prefix + z
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     resize-pane -Z
+Description  Toggle pane zoom (full-screen / restore).
+Example      <Ctrl+SPACE> → <z> → zooms active pane to fill window
+Short        Zoom/restore pane
+Executable   yes
+
+# Cheat
+Trigger      Prefix + ?
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     list-keys
+Description  Show all current tmux key bindings.
+Example      <Ctrl+SPACE> → <Shift++> → opens keybinding help
+Short        Show TMUX bindings
+Executable   yes
+
+# Cheat
+Trigger      Prefix + t
+Type         bindkey
+Domain       tmux
+Conditional  no
+Alternative  None
+Function     clock-mode
+Description  Show a floating clock in the pane.
+Example      <Ctrl+SPACE> → <t> → shows analog/digital clock overlay
+Short        Show TMUX clock
+Executable   yes

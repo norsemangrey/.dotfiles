@@ -4,14 +4,8 @@
 # EXPORT ENVIRONMENT VARIABLE #
 ###############################
 
-export DOTFILES="$HOME/.dotfiles"
-export WORKSPACE="$HOME/workspace"
-export LOG_PATH="$HOME/logs"
-
-# XDG
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_DATA_HOME=$XDG_CONFIG_HOME/local/share
-export XDG_CACHE_HOME=$XDG_CONFIG_HOME/cache
+# Source common environment variables
+[ -f "$HOME/.env" ] && source "$HOME/.env"
 
 # Editor
 export EDITOR="nano"
@@ -22,3 +16,79 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"   # ZSH Home directory
 export HISTFILE="$ZDOTDIR/.zhistory"    # History filepath
 export HISTSIZE=10000                   # Maximum events for internal history
 export SAVEHIST=10000                   # Maximum events in history file
+
+# Skip the not really helping Ubuntu global compinit (faster ZSH startup)
+skip_global_compinit=1
+
+# BAT
+export BAT_THEME="ansi"
+
+# FZF
+
+# Default commands for FZF to generate file lists
+# Uses fd to list all files (including hidden, following symlinks) for FZF, excluding some directories
+export FZF_DEFAULT_COMMAND='
+fd \
+    --type file \
+    --hidden \
+    --follow \
+    --exclude .git \
+    --exclude .dotnet \
+    --exclude .vscode-server \
+    --exclude plugins'
+
+# Command used to generate the list of files when FZF is triggered with 'Ctrl+R'
+export FZF_CTRL_R_COMMAND=$FZF_CTRL_R_COMMAND
+
+# Command used to generate the list of files when FZF is triggered with 'Ctrl+T'
+# Uses fd to list all files (including hidden, following symlinks) for FZF, excluding some directories
+export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+
+# Command used to generate the list of directories when FZF is triggered with 'Alt+C'
+# Uses fd to list all directories (including hidden, following symlinks) for FZF, excluding some directories
+export FZF_ALT_C_COMMAND='
+fd \
+    --type directory \
+    --hidden \
+    --follow \
+    --exclude .git \
+    --exclude plugins'
+
+# Default options for FZF
+# Sets the apperance and behaviour including color scheme, height, layout, and preview window
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+  --ansi
+  --color=light
+  --height=60%
+  --layout=reverse
+  --info=default
+  --border="rounded"
+  --border-label=""
+  --preview-window="border-rounded"
+  --prompt="> "
+  --marker=">"
+  --pointer="◆"
+  --separator="─"
+  --scrollbar="│"'
+
+# Options for FZF when triggered with 'Ctrl+R'
+# Adds a border label, preview window, key binding for preview toggle and exact matching
+export FZF_CTRL_R_OPTS='
+  --border-label="Command History Search"
+  --preview "echo {}"
+  --preview-window down:3:hidden:wrap
+  --bind "?:toggle-preview"
+  --exact'
+
+# Options for FZF when triggered with 'Ctrl+T'
+# Adds a border label and preview window using bat, cat, or tree, with a limit of 200 lines
+export FZF_CTRL_T_OPTS='
+  --border-label="File Search"
+  --preview "(bat --style=numbers --color=always {} || \
+             cat {} || tree -NC {}) 2>/dev/null | head -200"'
+
+# Options for FZF when triggered with 'Alt+C'
+# Adds a border label and preview window using lsd, with color and icon support
+export FZF_ALT_C_OPTS='
+  --border-label="Directory Navigation"
+  --preview "lsd --tree --color always --icon always {}"'

@@ -28,8 +28,8 @@ unbind %
 unbind '"'
 
 # Set new keys for new pane (vertical and horizontal split)
-bind v split-window -h -c "#{pane_current_path}"
-bind h split-window -v -c "#{pane_current_path}"
+bind v split-window -v -c "#{pane_current_path}"
+bind h split-window -h -c "#{pane_current_path}"
 
 # Set key for synchronizing panes
 bind-key y set-window-option synchronize-panes\; display-message "Synchronize mode toggled!"
