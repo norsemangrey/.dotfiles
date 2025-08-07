@@ -1,4 +1,3 @@
-
 <#
 .SYNOPSIS
 Install and manage symlinks for configuration files in a Windows development environment.
@@ -28,7 +27,8 @@ Executes the script, creating symlinks as specified in the configuration files.
 
 param (
     [bool] $dryRun = $true,
-    [bool] $debug = $true
+    [bool] $debug = $true,
+    [bool] $verbose = $false
 )
 
 
@@ -228,7 +228,9 @@ function New-Symlink {
             # Check if current target path is same as target from file
             if ($currentTarget -eq $targetPath) {
 
-                Write-Message "Symlink already exists and points to the correct target ($targetPath)" "INFO"
+                if ($verbose) {
+                    Write-Message "Symlink already exists and points to the correct target ($targetPath)" "INFO"
+                }
 
                 # Exit the function as the symlink is already correct
                 return
