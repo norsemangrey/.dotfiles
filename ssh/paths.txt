@@ -1,6 +1,8 @@
 w ssh-config $Env:USERPROFILE\.ssh\config
 w $Env:DOTFILES_CLOUD\ssh\ssh-config.home $Env:USERPROFILE\.ssh\config.home
 w $Env:DOTFILES_CLOUD\ssh\ssh-known_hosts.home $Env:USERPROFILE\.ssh\known_hosts.home
+w $Env:DOTFILES_CLOUD\ssh\ssh-config.other $Env:USERPROFILE\.ssh\config.other
+w $Env:DOTFILES_WORK\ssh\keys $Env:USERPROFILE\.ssh\keys
 w $Env:DOTFILES_WORK\ssh\ssh-config.work $Env:USERPROFILE\.ssh\config.work
 w $Env:DOTFILES_WORK\ssh\ssh-known_hosts.work $Env:USERPROFILE\.ssh\known_hosts.work
 

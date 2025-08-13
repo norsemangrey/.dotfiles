@@ -9,8 +9,11 @@
                 "action": "copy",
                 "singleLine": false
             },
-            "id": "User.copy.644BA8F2",
-            "keys": "ctrl+c"
+            "id": "User.copy.644BA8F2"
+        },
+        {
+            "command": "find",
+            "id": "User.find"
         },
         {
             "command":
@@ -19,18 +22,11 @@
                 "split": "auto",
                 "splitMode": "duplicate"
             },
-            "id": "User.splitPane.A6751878",
-            "keys": "alt+shift+d"
-        },
-        {
-            "command": "find",
-            "id": "User.find",
-            "keys": "ctrl+shift+f"
+            "id": "User.splitPane.A6751878"
         },
         {
             "command": "paste",
-            "id": "User.paste",
-            "keys": "ctrl+v"
+            "id": "User.paste"
         }
     ],
     "alwaysShowNotificationIcon": false,
@@ -38,6 +34,25 @@
     "copyOnSelect": false,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "initialRows": 41,
+    "keybindings":
+    [
+        {
+            "id": "User.copy.644BA8F2",
+            "keys": "ctrl+c"
+        },
+        {
+            "id": "User.splitPane.A6751878",
+            "keys": "alt+shift+d"
+        },
+        {
+            "id": "User.paste",
+            "keys": "ctrl+v"
+        },
+        {
+            "id": "User.find",
+            "keys": "ctrl+shift+f"
+        }
+    ],
     "newTabMenu":
     [
         {
@@ -86,6 +101,18 @@
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
                 "hidden": false,
                 "name": "Command Prompt"
+            },
+            {
+                "guid": "{0a018d97-4e1e-5188-9d77-7562a24d9110}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{a79b9c24-6d09-50a6-86ae-9028372f2b24}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },
@@ -201,6 +228,7 @@
             "green": "#85981C",
             "name": "Solarized Light Customized",
             "purple": "#D13A82",
+            "red": "#C94C22",
             "red": "#C94C22",
             "selectionBackground": "#EEE8D5",
             "white": "#A6A49D",
