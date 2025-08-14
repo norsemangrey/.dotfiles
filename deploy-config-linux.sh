@@ -313,7 +313,7 @@ processItem() {
 # Check if in test mode
 if [[ "${testMode}" == "true" ]]; then
 
-    # Set serch path to test directory
+    # Set search path to test directory
     searchPath="${dotfilesDirectory}/test"
 
     logMessage "Running in test mode. Only processing paths in: ${testDirectory}" "INFO"
@@ -333,6 +333,11 @@ find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
 
     # Extract the last directory name from the application path
     appDirectory=$(basename "$appPath")
+
+    # If not in test mode, skip the test directory
+    if [[ "${testMode}" != "true" && "${appDirectory}" == "test" ]]; then
+        continue
+    fi
 
     logMessage "Processing paths for '${appDirectory}'..." "INFO"
 
