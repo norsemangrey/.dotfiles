@@ -2,3 +2,11 @@
     path = ~/workspace/work/.gitconfig-work
 [includeIf "gitdir:~/workspace/personal/repos/"]
     path = ~/workspace/personal/.gitconfig-personal
+
+[pull]
+
+    # Performs merge operation on pull
+    rebase = false
+
+    # Prevents Fast-Forward (ensuring merge commits are made even if remote is not ahead of local)
+    ff = false

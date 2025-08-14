@@ -185,7 +185,7 @@ function pkill($name) {
 }
 
 # Function to mimic the OpenSSH function top copy public keys found on Linux
-function ssh-copy-id([string]$sshHost) {
+function ssh-copy-id([string]$sshHost, [string]$sshPort='22') {
 
     # Check if the host argument is provided
     if (-not $sshHost) {
@@ -235,7 +235,7 @@ function ssh-copy-id([string]$sshHost) {
 
         $command = "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod -R go= ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys"
 
-        ssh "$sshHost" $command
+        ssh "$sshHost" -p $sshPort $command
 
         Write-Host "Public key copied to $sshHost successfully."
 
