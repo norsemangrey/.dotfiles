@@ -1,1 +1,2 @@
 l /etc/davfs2/secrets $HOME/.config/davfs2/secrets
+l davfs2-config $HOME/.davfs2/davfs2.conf
