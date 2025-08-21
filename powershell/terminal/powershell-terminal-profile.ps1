@@ -187,6 +187,8 @@ function pkill($name) {
 # Function to mimic the OpenSSH function top copy public keys found on Linux
 function ssh-copy-id([string]$sshHost, [string]$sshPort='22') {
 
+    Write-Host "Attempting to copy public key to '$sshHost' on port $sshPort..."
+
     # Check if the host argument is provided
     if (-not $sshHost) {
 
@@ -195,11 +197,21 @@ function ssh-copy-id([string]$sshHost, [string]$sshPort='22') {
 
     }
 
-    # Extract the hostname or IP address from sshHost (before '@')
-    $hostname = $sshHost.Split('@')[1]
+    # Extract the hostname or IP address from host
+    if ($sshHost -match '^.+@.+$') {
+
+        $hostname = $sshHost.Split('@')[1]
+
+    } else {
+
+        $hostname = $sshHost
+
+    }
 
     # Verify if the SSH host is reachable by attempting to ping (optional step)
     try {
+
+        Write-Host "Pinging $hostname..."
 
         $pingResult = Test-Connection -ComputerName $hostname -Count 1 -Quiet
 
