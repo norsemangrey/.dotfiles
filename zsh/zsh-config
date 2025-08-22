@@ -6,6 +6,18 @@ export PATH=$PATH:$HOME/.local/bin
 # Stop annoying beeping
 unsetopt BEEP
 
+# Check plugins only on login shell
+if [[ -o login ]] && [[ -z "$TMUX" ]]; then
+
+  cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-completions"
+  cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-autosuggestions"
+  cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-syntax-highlighting"
+  cloneOrUpdatePlugin "https://github.com/Aloxaf/fzf-tab"
+  cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-ssh"
+  cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-active-cheatsheet.git"
+
+fi
+
 # +-------------------+
 # | LANGUAGE & REGION |
 # +-------------------+
@@ -86,9 +98,6 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or po
 # | COMPLETION |
 # +------------+
 
-# Clone or update plugin
-cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-completions"
-
 # Include the completions from the zsh-completions package
 # Loads additional completion definitions from the plugin (but not required)
 fpath=($ZDOTDIR/plugins/zsh-completions/src $fpath)
@@ -151,10 +160,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 
 # +-----------------+
 # | AUTO COMPLETION |
-# +----------------+
-
-# Clone or update plugin
-#cloneOrUpdatePlugin "https://github.com/marlonrichert/zsh-autocomplete"
+# +-----------------+
 
 # Load Auto-Suggestions plugin
 #(in addition to the ZSH completion system)
@@ -173,8 +179,6 @@ zstyle ':completion:*:descriptions' format '[%d]'
 # | SUGGESTIONS |
 # +-------------+
 
-# Clone or update plugin
-cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-autosuggestions"
 
 # Load Auto-Suggestions plugin
 source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -186,9 +190,6 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
 # | HIGHLIGHTING |
 # +--------------+
 
-# Clone or update plugin
-cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-syntax-highlighting"
-
 # Load Syntax Highlighting plugin
 source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
@@ -199,9 +200,6 @@ source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Check if the fzf key bindings and completion script exists and source it if it does
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source   /usr/share/doc/fzf/examples/completion.zsh
-
-# Clone or update plugin
-cloneOrUpdatePlugin "https://github.com/Aloxaf/fzf-tab"
 
 # Load FZF Tab Completion plugin
 source $ZDOTDIR/plugins/fzf-tab/fzf-tab.plugin.zsh
@@ -215,9 +213,6 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd --tree --color=always --icon=al
 # +-----+
 # | SSH |
 # +-----+
-
-# Clone or update plugin
-cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-ssh"
 
 # Load SSH completion plugin
 source $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh
@@ -233,9 +228,6 @@ compdef _ssh ssh
 
 # Set cheats root directory
 export ZSH_ACTIVE_CHEATSHEET_DIRS=("$HOME/.config")
-
-# Source the plugin
-cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-active-cheatsheet.git"
 
 # Load the cheatsheet plugin
 source $ZDOTDIR/plugins/zsh-active-cheatsheet/zsh-active-cheatsheet.plugin.zsh
