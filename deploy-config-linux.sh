@@ -310,6 +310,66 @@ processItem() {
 
 }
 
+# Function to recursively check for broken symlinks in the home directory
+symlinkCleanup() {
+
+    logMessage "Checking for broken symlinks in '${HOME}'..." "INFO"
+
+    local brokenSymlinks=()
+
+    # Find all symlinks recursively in home directory
+    while IFS= read -r symlink; do
+
+        # Resolve the symlink target
+        target=$(readlink "${symlink}")
+
+        # Check if the symlink target exists
+        if [[ ! -e "${target}" ]]; then
+
+            logMessage "Broken symlink: ${symlink} -> ${target}" "WARNING"
+
+            # Mark the symlink for removal
+            brokenSymlinks+=("${symlink}")
+
+        fi
+
+    done < <(find "${HOME}" -type l)
+
+    # Check for any broken symlinks
+    if [ ${#brokenSymlinks[@]} -eq 0 ]; then
+
+        logMessage "No broken symlinks found in ${HOME}." "DEBUG"
+
+        return
+
+    fi
+
+    # Prompt the user for confirmation of removal
+    echo "Found ${#brokenSymlinks[@]} broken symlinks."
+    read -p "Press 'Enter' to remove them, or type 'N/n' to skip removal." 2>&1 confirm
+
+    # If user did not type anything proceed with removal
+    if [ -z "$confirm" ]; then
+
+        # Remove all broken symlinks
+        for symlink in "${brokenSymlinks[@]}"; do
+
+            if [[ "${dryRun}" != "true" ]]; then
+                rm -v "${symlink}"
+            fi
+
+        done
+
+        logMessage "All broken symlinks removed." "INFO"
+
+    else
+
+        logMessage "No symlinks were removed." "WARNING"
+
+    fi
+
+}
+
 # Check if in test mode
 if [[ "${testMode}" == "true" ]]; then
 
@@ -423,3 +483,6 @@ find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
     done
 
 done
+
+# Cleanup broken symlinks
+symlinkCleanup
