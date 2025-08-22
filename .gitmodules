@@ -1,7 +1,7 @@
 [submodule "utils/powershell"]
 	path = utils/powershell
 	url = https://github.com/norsemangrey/powershell-script-support-functions.git
-	branch = master
+	branch = main
 [submodule "utils/bash"]
 	path = utils/bash
 	url = https://github.com/norsemangrey/bash-script-support-functions.git
