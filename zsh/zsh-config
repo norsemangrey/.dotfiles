@@ -105,7 +105,17 @@ fpath=($ZDOTDIR/plugins/zsh-completions/src $fpath)
 # Initialize the completion for the current ZSH session
 # (commented out when using the zsh-autocomplete plugin)
 autoload -Uz compinit
-compinit
+
+# Smarter completion initialization (only once a day to speed up loading time)
+if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' $ZDOTDIR/.zcompdump 2>/dev/null)" ]; then
+
+    compinit
+
+else
+
+    compinit -C
+
+fi
 
 # Allow hidden files/directories to be shown/included in completions
 _comp_options+=(globdots)
@@ -185,6 +195,8 @@ source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Set the font highlight style of the auto-suggestions
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
+ZSH_AUTOSUGGEST_USE_ASYNC=1
 
 # +--------------+
 # | HIGHLIGHTING |
