@@ -1,11 +1,13 @@
-set -g @BACKGROUND_COLOR "#EEE8D5"
-
-# Set history length
-set -g history-limit 100000
 
 # Prevents pass through of “XT/DA” terminal queries and responses
 # This was needed to prevent output of gibberish on tmux start
 set -ga terminal-overrides ',*:XT'
+
+# Define background color
+set -g @BACKGROUND_COLOR "#EEE8D5"
+
+# Set history length
+set -g history-limit 100000
 
 # Ensure that TMUX uses true color
 set-option -g default-terminal "screen-256color"
