@@ -6,9 +6,17 @@ export PATH=$PATH:$HOME/.local/bin
 # Stop annoying beeping
 unsetopt BEEP
 
+# +---------+
+# | PLUGINS |
+# +---------+
+
 # Check plugins only on login shell
 if [[ -o login ]] && [[ -z "$TMUX" ]]; then
 
+  # Load plugin scripts
+  source $ZDOTDIR/scripts/update-plugins.zsh
+
+  # Clone or update plugins
   cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-completions"
   cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-autosuggestions"
   cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-syntax-highlighting"
@@ -31,13 +39,6 @@ export LC_NUMERIC=nb_NO.UTF-8
 export LC_MONETARY=nb_NO.UTF-8
 export LC_COLLATE=en_US.UTF-8
 export LC_MESSAGES=en_US.UTF-8
-
-# +---------+
-# | SCRIPTS |
-# +---------+
-
-# Load ZSH scripts
-source $ZDOTDIR/scripts.zsh
 
 # +---------+
 # | ALIASES |
@@ -283,25 +284,25 @@ fi
 # | KEYCHAIN |
 # +----------+
 
-# Initialize key list
-SSH_KEYS=()
+# # Initialize key list
+# SSH_KEYS=()
 
-# Add keys to list
-for key in ~/.ssh/keys/*_ed25519; do
+# # Add keys to list
+# for key in ~/.ssh/keys/*_ed25519; do
 
-  # Check file and add
-  if [[ -f "$key" ]]; then
+#   # Check file and add
+#   if [[ -f "$key" ]]; then
 
-    SSH_KEYS+=("$key")
+#     SSH_KEYS+=("$key")
 
-  fi
+#   fi
 
-done
+# done
 
-# Load all keys into keychain
-if [[ ${#SSH_KEYS[@]} -gt 0 ]]; then
+# # Load all keys into keychain
+# if [[ ${#SSH_KEYS[@]} -gt 0 ]]; then
 
-  # Start keychain and load SSH keys
-  eval $(keychain --agents ssh --quiet --eval "${SSH_KEYS[@]}")
+#   # Start keychain and load SSH keys
+#   eval $(keychain --agents ssh --quiet --eval "${SSH_KEYS[@]}")
 
-fi
+# fi

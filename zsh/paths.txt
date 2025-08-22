@@ -1,3 +1,3 @@
 l zsh-config $HOME/.config/zsh/.zshrc
-l zsh-scripts $HOME/.config/zsh/scripts.zsh
+l scripts $HOME/.config/zsh/scripts
 l zsh-envs $HOME/.zshenv

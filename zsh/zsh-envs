@@ -7,11 +7,17 @@
 # Source common environment variables
 [ -f "$HOME/.env" ] && source "$HOME/.env"
 
-# Editor
+# +--------+
+# | EDITOR |
+# +--------+
+
 export EDITOR="nano"
 export VISUAL="nano"
 
-# ZSH
+# +-----+
+# | ZSH |
+# +-----+
+
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"   # ZSH Home directory
 export HISTFILE="$ZDOTDIR/.zhistory"    # History filepath
 export HISTSIZE=10000                   # Maximum events for internal history
@@ -23,7 +29,9 @@ skip_global_compinit=1
 # BAT
 export BAT_THEME="ansi"
 
-# FZF
+# +-----+
+# | FZF |
+# +-----+
 
 # Default commands for FZF to generate file lists
 # Uses fd to list all files (including hidden, following symlinks) for FZF, excluding some directories
@@ -92,3 +100,10 @@ export FZF_CTRL_T_OPTS='
 export FZF_ALT_C_OPTS='
   --border-label="Directory Navigation"
   --preview "lsd --tree --color always --icon always {}"'
+
+# +----------+
+# | KEYCHAIN |
+# +----------+
+
+# Load SSH keychain for all shells (interactive + non-interactive, e.g. VSCode)
+[[ -f ~/.config/zsh/scripts/ssh-keychain.zsh ]] && source ~/.config/zsh/scripts/ssh-keychain.zsh
