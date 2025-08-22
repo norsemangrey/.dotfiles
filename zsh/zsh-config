@@ -27,7 +27,6 @@ export LC_MESSAGES=en_US.UTF-8
 # Load ZSH scripts
 source $ZDOTDIR/scripts.zsh
 
-
 # +---------+
 # | ALIASES |
 # +---------+
@@ -47,7 +46,6 @@ source ~/.config/aliases/aliases
 # Short        Reloads shell
 # Executable   no
 alias rl="source $ZDOTDIR/.zshrc"
-
 
 # +--------+
 # | COLORS |
@@ -189,7 +187,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
 # +--------------+
 
 # Clone or update plugin
- cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-syntax-highlighting"
+cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-syntax-highlighting"
 
 # Load Syntax Highlighting plugin
 source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -270,14 +268,18 @@ eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/themes/posh-custom
 # | INFO |
 # +------+
 
-# Display system information
-fastfetch
+# Display system information only for login shells and not inside tmux
+if [[ -o login ]] && [[ -z "$TMUX" ]]; then
+
+  fastfetch
+
+fi
 
 # +----------+
 # | KEYCHAIN |
 # +----------+
 
-# Intialize key list
+# Initialize key list
 SSH_KEYS=()
 
 # Add keys to list
