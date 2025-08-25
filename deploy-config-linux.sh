@@ -324,7 +324,7 @@ symlinkCleanup() {
         target=$(readlink "${symlink}")
 
         # Check if the symlink target exists
-        if [[ ! -e "${target}" ]]; then
+        if [[ ! -e "${symlink}" ]]; then
 
             logMessage "Broken symlink: ${symlink} -> ${target}" "WARNING"
 
