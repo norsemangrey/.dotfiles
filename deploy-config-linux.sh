@@ -364,7 +364,7 @@ symlinkCleanup() {
 
     else
 
-        logMessage "No symlinks were removed." "WARNING"
+        logMessage "No broken symlinks were removed." "WARNING"
 
     fi
 
