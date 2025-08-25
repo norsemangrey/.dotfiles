@@ -346,7 +346,7 @@ symlinkCleanup() {
 
     # Prompt the user for confirmation of removal
     echo "Found ${#brokenSymlinks[@]} broken symlinks."
-    read -p "Press 'Enter' to remove them, or type 'N/n' to skip removal." 2>&1 confirm
+    read -p "Press 'Enter' to remove them, or type 'N/n' to skip removal: " 2>&1 confirm
 
     # If user did not type anything proceed with removal
     if [ -z "$confirm" ]; then
