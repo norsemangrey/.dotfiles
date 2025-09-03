@@ -10,3 +10,13 @@
 
     # Prevents Fast-Forward (ensuring merge commits are made even if remote is not ahead of local)
     ff = false
+
+[http]
+
+    # Sets timeout on HTTP requests
+    timeout = 30
+
+[credential]
+
+    # Set specific credential helper
+    helper = /usr/local/bin/git-credential-manager
