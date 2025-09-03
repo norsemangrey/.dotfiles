@@ -9,7 +9,7 @@
     rebase = false
 
     # Prevents Fast-Forward (ensuring merge commits are made even if remote is not ahead of local)
-    ff = false
+    #ff = false
 
 [http]
 
