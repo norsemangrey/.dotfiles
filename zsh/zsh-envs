@@ -105,5 +105,5 @@ export FZF_ALT_C_OPTS='
 # | KEYCHAIN |
 # +----------+
 
-# Load SSH keychain for all shells (interactive + non-interactive, e.g. VSCode)
-[[ -f ~/.config/zsh/scripts/ssh-keychain.zsh ]] && source ~/.config/zsh/scripts/ssh-keychain.zsh
+# Load keychain for all agents
+[[ -f ~/.config/zsh/scripts/keychain-setup.zsh ]] && source ~/.config/zsh/scripts/keychain-setup.zsh
