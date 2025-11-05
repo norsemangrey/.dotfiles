@@ -6,6 +6,7 @@
 
 # Source common environment variables
 [ -f "$HOME/.env" ] && source "$HOME/.env"
+[ -f "$DOTFILES_CLOUD/.env" ] && source "$DOTFILES_CLOUD/.env"
 
 # +--------+
 # | EDITOR |

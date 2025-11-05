@@ -1,0 +1,3 @@
+l nextcloud-sync.sh $HOME/.config/systemd/user/nextcloud-sync.sh
+l nextcloud-sync.service $HOME/.config/systemd/user/nextcloud-sync.service
+l nextcloud-sync.timer $HOME/.config/systemd/user/nextcloud-sync.timer

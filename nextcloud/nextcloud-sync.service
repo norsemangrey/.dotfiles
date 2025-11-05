@@ -1,0 +1,8 @@
+[Unit]
+Description=Nextcloud One-Shot Sync (nextcloudcmd)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.config/systemd/user/nextcloud-sync.sh
