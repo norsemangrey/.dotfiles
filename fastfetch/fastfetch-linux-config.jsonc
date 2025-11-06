@@ -3,7 +3,7 @@
     "logo": {
         "source": "~/.config/fastfetch/ascii.txt",
         "padding": {
-            "top": 1,
+            "top": 2,
             "right": 6
         },
         "color": {
