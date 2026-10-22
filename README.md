@@ -82,3 +82,4 @@ To create symbolic links manually, use:
 
   - Complete initial configurations for all supported applications.
   - Update README for Linux setup
+  - Delete this line.
