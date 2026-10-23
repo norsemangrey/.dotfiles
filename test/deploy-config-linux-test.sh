@@ -44,13 +44,13 @@ deploy() {
 }
 hasLog() { grep -Fq -- "$1" "${fixture}/output" || fail "Missing log: $1"; }
 
-for scope in work personal both; do
+for scope in work personal both none; do
     newHome "${scope}"
     DOTFILES_SCOPE="${scope}" deploy --debug </dev/null
     [[ -L "${HOME}/links/common" ]] || fail "${scope}: common mapping"
     hasLog "Mapping scope: ${scope}"
     hasLog "does not exist."
-    if [[ "${scope}" != personal ]]; then
+    if [[ "${scope}" == work || "${scope}" == both ]]; then
         [[ -L "${HOME}/links/work" && -L "${HOME}/links/work-braced" &&
            -L "${HOME}/work/destination" && -f "${HOME}/keys/key" &&
            ! -L "${HOME}/keys/key" ]] || fail "${scope}: work mappings"
@@ -60,7 +60,7 @@ for scope in work personal both; do
            ! -e "${HOME}/keys" ]] || fail "Work mappings not skipped"
         hasLog "Skipping work mapping"
     fi
-    if [[ "${scope}" != work ]]; then
+    if [[ "${scope}" == personal || "${scope}" == both ]]; then
         [[ -L "${HOME}/links/personal" && -L "${HOME}/links/personal-braced" &&
            -L "${HOME}/personal/destination" ]] || fail "${scope}: personal mappings"
     else
@@ -69,6 +69,25 @@ for scope in work personal both; do
         hasLog "Skipping personal mapping"
     fi
 done
+
+newHome cleanup-none
+rm -- "${HOME}/work/source" "${HOME}/work/keys/key" "${HOME}/personal/source"
+rmdir -- "${HOME}/work/keys" "${HOME}/work" "${HOME}/personal"
+for skipped in work personal; do
+    ln -s "${HOME}/${skipped}/missing" "${HOME}/links/${skipped}-absolute"
+    ln -s "../${skipped}/missing" "${HOME}/links/${skipped}-relative"
+done
+ln -s "${HOME}/missing" "${HOME}/links/unprotected"
+printf '\n' | deploy --scope none --debug
+[[ -L "${HOME}/links/common" && ! -L "${HOME}/links/unprotected" ]] ||
+    fail "None scope common mapping or cleanup"
+for skipped in work personal; do
+    [[ -L "${HOME}/links/${skipped}-absolute" && -L "${HOME}/links/${skipped}-relative" ]] ||
+        fail "None scope cleanup protection for ${skipped}"
+done
+if grep -Fq 'Continue without an available' "${fixture}/output"; then
+    fail "None scope prompted for unavailable roots"
+fi
 
 newHome default
 DOTFILES_SCOPE= deploy </dev/null
@@ -127,5 +146,11 @@ printf 'DOTFILES_WORK=%s/work\n' "${HOME}" > "${fixture}/repo/.env.linux"
 cp "${fixture}/repo/.env.linux" "${fixture}/repo/.env.wsl"
 unset DOTFILES_CLOUD
 if deploy --scope personal </dev/null; then fail "Unset root accepted"; fi
+
+printf '# No external roots configured\n' > "${fixture}/repo/.env.linux"
+cp "${fixture}/repo/.env.linux" "${fixture}/repo/.env.wsl"
+unset DOTFILES_WORK DOTFILES_CLOUD
+deploy -s none </dev/null
+hasLog "Mapping scope: none"
 
 printf 'All scope deployment tests passed.\n'

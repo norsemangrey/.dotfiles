@@ -10,7 +10,7 @@ usage() {
     echo "  -d, --dry-run           Simulates actions without making changes."
     echo "  -t, --test              Runs in test mode (only process 'test' directory)."
     echo "  -v, --verbose           Shows standards output from commands."
-    echo "  -s, --scope SCOPE       Maps work, personal, or both (overrides DOTFILES_SCOPE)."
+    echo "  -s, --scope SCOPE       Maps work, personal, both, or none (overrides DOTFILES_SCOPE)."
     echo "  -h, --help              Show this help message and exit."
     echo ""
     echo "This script reads environment variables from a .env file and creates symbolic links for"
@@ -49,7 +49,7 @@ while [[ $# -gt 0 ]]; do
             # The scope option requires a separate, non-empty value.
             if [[ $# -lt 2 || -z "$2" ]]; then
 
-                echo "Option $1 requires work, personal, or both." >&2
+                echo "Option $1 requires work, personal, both, or none." >&2
                 exit 1
 
             fi
@@ -71,9 +71,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Reject invalid scopes before starting deployment.
-if [[ -n "${scope}" && "${scope}" != "work" && "${scope}" != "personal" && "${scope}" != "both" ]]; then
+if [[ -n "${scope}" && "${scope}" != "work" && "${scope}" != "personal" && "${scope}" != "both" && "${scope}" != "none" ]]; then
 
-    echo "Invalid scope: ${scope}. Expected work, personal, or both." >&2
+    echo "Invalid scope: ${scope}. Expected work, personal, both, or none." >&2
     exit 1
 
 fi
@@ -414,9 +414,9 @@ symlinkCleanup() {
 
         # Preserve unselected scope links, matching whole directory names only.
         # Match the root itself or root/children, never similarly named sibling paths.
-        if { [[ "${scope}" == "personal" && -n "${workRoot}" ]] &&
+        if { [[ "${scope}" != "both" && "${scope}" != "work" && -n "${workRoot}" ]] &&
              [[ "${cleanupTarget}" == "${workRoot%/}" || "${cleanupTarget}" == "${workRoot%/}/"* ]]; } ||
-           { [[ "${scope}" == "work" && -n "${personalRoot}" ]] &&
+           { [[ "${scope}" != "both" && "${scope}" != "personal" && -n "${personalRoot}" ]] &&
              [[ "${cleanupTarget}" == "${personalRoot%/}" || "${cleanupTarget}" == "${personalRoot%/}/"* ]]; }; then
 
             logMessage "Skipping cleanup of unselected scope symlink: ${symlink} -> ${target}" "DEBUG"

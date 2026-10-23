@@ -35,10 +35,11 @@ Run the script using `.env.linux` (or `.env.wsl` under WSL):
 DOTFILES_SCOPE=both ./deploy-config-linux.sh
 ```
 
-- `-s, --scope work|personal|both` overrides `DOTFILES_SCOPE`.
+- `-s, --scope work|personal|both|none` overrides `DOTFILES_SCOPE`.
 - Without a scope, defaults to `both` without prompting.
 - Work paths reference `DOTFILES_WORK`; personal paths reference
   `DOTFILES_CLOUD`. Repo-local mappings always apply.
+- Use `none` to skip both work and personal mappings and their root checks.
 - Unavailable or empty selected roots require `y`/`yes` to continue.
   Cleanup preserves links into unselected roots; keep both roots configured.
 - Use `--dry-run`, `--test`, `--debug`, and `--verbose` as needed.
