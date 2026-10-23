@@ -10,14 +10,20 @@ usage() {
     echo "  -d, --dry-run           Simulates actions without making changes."
     echo "  -t, --test              Runs in test mode (only process 'test' directory)."
     echo "  -v, --verbose           Shows standards output from commands."
+    echo "  -s, --scope SCOPE       Maps work, personal, or both (overrides DOTFILES_SCOPE)."
     echo "  -h, --help              Show this help message and exit."
     echo ""
     echo "This script reads environment variables from a .env file and creates symbolic links for"
     echo "configuration files based on paths specified in each subfolder's "paths.txt" file."
     echo "Symbolic links allow the configurations to be used without copying files directly,"
     echo "facilitating easy updates and management using Git."
+    echo "Scope defaults to both when not specified."
+    echo "Repo-local paths always apply. Missing or empty selected roots require confirmation."
     echo ""
 }
+
+# Capture the caller's scope before loading .env; unset or empty means both.
+scope="${DOTFILES_SCOPE:-both}"
 
 # Parsed from command line arguments.
 while [[ $# -gt 0 ]]; do
@@ -38,6 +44,20 @@ while [[ $# -gt 0 ]]; do
             verbose=true
             shift
             ;;
+        -s|--scope)
+
+            # The scope option requires a separate, non-empty value.
+            if [[ $# -lt 2 || -z "$2" ]]; then
+
+                echo "Option $1 requires work, personal, or both." >&2
+                exit 1
+
+            fi
+
+            # Override the environment choice and consume both option arguments.
+            scope="$2"
+            shift 2
+            ;;
         -h|--help)
             usage
             exit 0
@@ -49,6 +69,14 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Reject invalid scopes before starting deployment.
+if [[ -n "${scope}" && "${scope}" != "work" && "${scope}" != "personal" && "${scope}" != "both" ]]; then
+
+    echo "Invalid scope: ${scope}. Expected work, personal, or both." >&2
+    exit 1
+
+fi
 
 # Set external logger- and error handling script paths
 # Getting absolute path as script might be called from another script
@@ -193,6 +221,55 @@ else
 
 fi
 
+logMessage "Mapping scope: ${scope}" "INFO"
+
+# Normalize both roots for validation and cleanup, even if one is not selected.
+workRoot=""
+personalRoot=""
+
+# Leave unset roots empty so they cannot accidentally resolve to the repository.
+[[ -n "${DOTFILES_WORK}" ]] && workRoot=$(realpath -ms -- "$(expandPath "${DOTFILES_WORK}" "${dotfilesDirectory}")")
+[[ -n "${DOTFILES_CLOUD}" ]] && personalRoot=$(realpath -ms -- "$(expandPath "${DOTFILES_CLOUD}" "${dotfilesDirectory}")")
+
+# Confirm unavailable selected roots before applying any mappings.
+for selectedScope in work personal; do
+
+    # Only validate roots included in the chosen scope.
+    [[ "${scope}" != "both" && "${scope}" != "${selectedScope}" ]] && continue
+
+    # Keep the normalized root and its variable name together for warning messages.
+    if [[ "${selectedScope}" == "work" ]]; then
+
+        scopeRoot="${workRoot}"
+        scopeVariable=DOTFILES_WORK
+
+    else
+
+        scopeRoot="${personalRoot}"
+        scopeVariable=DOTFILES_CLOUD
+
+    fi
+
+    # A usable root must be a readable, searchable directory with content.
+    # Only list valid directories, including hidden files in the emptiness check.
+    if [[ -z "${scopeRoot}" || ! -d "${scopeRoot}" || ! -r "${scopeRoot}" || ! -x "${scopeRoot}" ]] ||
+        [[ -z "$(ls -A -- "${scopeRoot}")" ]]; then
+
+        logMessage "Selected ${selectedScope} root (${scopeVariable}=${scopeRoot}) is unset, missing, unreadable, or empty." "WARNING"
+        printf 'Continue without an available %s root? [y/N] ' "${selectedScope}"
+
+        # Lowercase the answer so y/yes is case-insensitive; Enter or EOF cancels.
+        if ! read -r continueChoice || [[ "${continueChoice,,}" != "y" && "${continueChoice,,}" != "yes" ]]; then
+
+            logMessage "Deployment cancelled: ${selectedScope} root is unavailable." "ERROR"
+            exit 1
+
+        fi
+
+    fi
+
+done
+
 # Function to handle either secure copy or symlink creation
 processItem() {
 
@@ -323,6 +400,30 @@ symlinkCleanup() {
         # Resolve the symlink target
         target=$(readlink "${symlink}")
 
+        # Normalize '..' without requiring the target to exist (-m) or following links (-s).
+        if [[ "${target}" == /* ]]; then
+
+            cleanupTarget=$(realpath -ms -- "${target}")
+
+        else
+
+            # Relative symlink targets are based on the link's directory, not this script.
+            cleanupTarget=$(realpath -ms -- "$(dirname "${symlink}")/${target}")
+
+        fi
+
+        # Preserve unselected scope links, matching whole directory names only.
+        # Match the root itself or root/children, never similarly named sibling paths.
+        if { [[ "${scope}" == "personal" && -n "${workRoot}" ]] &&
+             [[ "${cleanupTarget}" == "${workRoot%/}" || "${cleanupTarget}" == "${workRoot%/}/"* ]]; } ||
+           { [[ "${scope}" == "work" && -n "${personalRoot}" ]] &&
+             [[ "${cleanupTarget}" == "${personalRoot%/}" || "${cleanupTarget}" == "${personalRoot%/}/"* ]]; }; then
+
+            logMessage "Skipping cleanup of unselected scope symlink: ${symlink} -> ${target}" "DEBUG"
+            continue
+
+        fi
+
         # Check if the symlink target exists
         if [[ ! -e "${symlink}" ]]; then
 
@@ -402,12 +503,37 @@ find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
     logMessage "Processing paths for '${appDirectory}'..." "INFO"
 
     # Process only lines starting with "l "
-    grep '^l' "${pathsFile}" | while IFS= read -r line; do
+    grep '^l ' "${pathsFile}" | while IFS= read -r line; do
 
         # Extract target, destination, and mode columns from the line
         targetPathRaw=$(echo "${line}" | awk '{print $2}')
         symlinkPathRaw=$(echo "${line}" | awk '{print $3}')
         mode=$(echo "${line}" | awk '{print $4}')
+
+        # Classify before expanding variables; work takes precedence if both appear.
+        pathScope=common
+
+        # Inspect both columns for literal work references, with or without braces.
+        if [[ "${targetPathRaw} ${symlinkPathRaw}" == *'$DOTFILES_WORK'* ||
+              "${targetPathRaw} ${symlinkPathRaw}" == *'${DOTFILES_WORK}'* ]]; then
+
+            pathScope=work
+
+        # Cloud references identify personal mappings when no work reference matched.
+        elif [[ "${targetPathRaw} ${symlinkPathRaw}" == *'$DOTFILES_CLOUD'* ||
+                "${targetPathRaw} ${symlinkPathRaw}" == *'${DOTFILES_CLOUD}'* ]]; then
+
+            pathScope=personal
+
+        fi
+
+        # Skip unselected external paths while always keeping common mappings.
+        if [[ "${pathScope}" != "common" && "${scope}" != "both" && "${scope}" != "${pathScope}" ]]; then
+
+            logMessage "Skipping ${pathScope} mapping for scope ${scope}: ${line}" "DEBUG"
+            continue
+
+        fi
 
         # Set secure copy mode if the mode column is "*" (copy and set permissions instead of symlink)
         copySecureMode=false

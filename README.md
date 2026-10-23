@@ -25,6 +25,25 @@ This repository provides configuration files and scripts for setting up symlinks
 
 ## Usage
 
+### Linux and WSL
+
+Run the script using `.env.linux` (or `.env.wsl` under WSL):
+
+```bash
+./deploy-config-linux.sh --scope work
+./deploy-config-linux.sh -s personal --dry-run --debug
+DOTFILES_SCOPE=both ./deploy-config-linux.sh
+```
+
+- `-s, --scope work|personal|both` overrides `DOTFILES_SCOPE`.
+- Without a scope, defaults to `both` without prompting.
+- Work paths reference `DOTFILES_WORK`; personal paths reference
+  `DOTFILES_CLOUD`. Repo-local mappings always apply.
+- Unavailable or empty selected roots require `y`/`yes` to continue.
+  Cleanup preserves links into unselected roots; keep both roots configured.
+- Use `--dry-run`, `--test`, `--debug`, and `--verbose` as needed.
+  Callers such as the Linux setup deployer can export `DOTFILES_SCOPE`.
+
 ### Running the Script
 
 1. **Basic Execution:** Run the script with:
@@ -81,5 +100,4 @@ To create symbolic links manually, use:
 - **TODO**: The following improvements are planned:
 
   - Complete initial configurations for all supported applications.
-  - Update README for Linux setup
   - Delete this line.
