@@ -6,6 +6,7 @@ fixture=$(mktemp -d)
 trap 'rm -rf -- "${fixture}"' EXIT
 mkdir -p "${fixture}/repo/utils/bash" "${fixture}/repo/app/content" "${fixture}/repo/test"
 cp "${sourceDirectory}/deploy-config-linux.sh" "${fixture}/repo/"
+cp -r "${sourceDirectory}/konsole" "${fixture}/repo/"
 cp "${sourceDirectory}/utils/bash/logging-and-output-function.sh" "${fixture}/repo/utils/bash/"
 # Mirror stderr redirection without using the handler's shared /tmp error file.
 printf '%s\n' 'exec 2>"${HOME}/errors.log"' > "${fixture}/repo/utils/bash/error-handling-function.sh"
@@ -38,6 +39,8 @@ newHome() {
     HOME="${fixture}/$1"
     export HOME
     mkdir -p "${HOME}/work/keys" "${HOME}/personal" "${HOME}/links"
+    mkdir -p "${HOME}/.local/share/konsole"
+    printf 'unrelated\n' > "${HOME}/.local/share/konsole/Existing.profile"
     printf 'work\n' > "${HOME}/work/source"
     printf 'secret\n' > "${HOME}/work/keys/key"
     printf 'personal\n' > "${HOME}/personal/source"
@@ -53,6 +56,16 @@ for scope in work personal both none; do
     newHome "${scope}"
     DOTFILES_SCOPE="${scope}" deploy --debug </dev/null
     [[ -L "${HOME}/links/common" ]] || fail "${scope}: common mapping"
+    for config in konsolerc SolarizedLight.profile SolarizedDark.profile \
+        SolarizedLightCustomized.colorscheme SolarizedDarkModified.colorscheme; do
+        destination="${HOME}/.local/share/konsole/${config}"
+        [[ "${config}" == konsolerc ]] && destination="${HOME}/.config/konsolerc"
+        [[ -L "${destination}" &&
+           "$(readlink "${destination}")" == "${fixture}/repo/konsole/${config}" &&
+           -f "${destination}" ]] || fail "${scope}: Konsole mapping ${config}"
+    done
+    [[ "$(cat "${HOME}/.local/share/konsole/Existing.profile")" == unrelated ]] ||
+        fail "${scope}: unrelated Konsole profile changed"
     hasLog "Mapping scope: ${scope}"
     hasLog "does not exist."
     if [[ "${scope}" == work || "${scope}" == both ]]; then
@@ -102,6 +115,12 @@ newHome override
 DOTFILES_SCOPE=personal deploy -s work --dry-run --debug --verbose </dev/null
 hasLog "Mapping scope: work"
 [[ ! -e "${HOME}/links/common" && ! -e "${HOME}/keys" ]] || fail "Dry run wrote mappings"
+[[ ! -e "${HOME}/.config/konsolerc" &&
+   ! -e "${HOME}/.local/share/konsole/SolarizedLight.profile" &&
+   ! -e "${HOME}/.local/share/konsole/SolarizedDark.profile" &&
+   ! -e "${HOME}/.local/share/konsole/SolarizedLightCustomized.colorscheme" &&
+   ! -e "${HOME}/.local/share/konsole/SolarizedDarkModified.colorscheme" ]] ||
+    fail "Dry run wrote Konsole mappings"
 
 newHome test-mode
 deploy --scope both --test </dev/null

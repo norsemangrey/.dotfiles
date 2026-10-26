@@ -1,0 +1,5 @@
+l konsolerc $HOME/.config/konsolerc
+l SolarizedLight.profile $HOME/.local/share/konsole/SolarizedLight.profile
+l SolarizedDark.profile $HOME/.local/share/konsole/SolarizedDark.profile
+l SolarizedLightCustomized.colorscheme $HOME/.local/share/konsole/SolarizedLightCustomized.colorscheme
+l SolarizedDarkModified.colorscheme $HOME/.local/share/konsole/SolarizedDarkModified.colorscheme
