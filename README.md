@@ -44,6 +44,13 @@ DOTFILES_SCOPE=both ./deploy-config-linux.sh
   Cleanup preserves links into unselected roots; keep both roots configured.
 - Use `--dry-run`, `--test`, `--debug`, and `--verbose` as needed.
   Callers such as the Linux setup deployer can export `DOTFILES_SCOPE`.
+- Broken-symlink cleanup checks only symlink destinations in selected mappings,
+  and only when the link target matches the mapped source. Content mappings
+  check immediate destination children (including hidden links), not subdirectories.
+  Unrelated links, Trash, and secure-copy destinations are left alone; the home
+  directory is not scanned. Mappings removed from `paths.txt` are not cleaned up.
+- Cleanup requires Enter to confirm removal; any text or EOF skips removal.
+  Dry runs report broken mapped links without prompting or deleting anything.
 
 ### Running the Script
 

@@ -4,12 +4,13 @@ set -euo pipefail
 sourceDirectory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 fixture=$(mktemp -d)
 trap 'rm -rf -- "${fixture}"' EXIT
-mkdir -p "${fixture}/repo/utils/bash" "${fixture}/repo/app" "${fixture}/repo/test"
+mkdir -p "${fixture}/repo/utils/bash" "${fixture}/repo/app/content" "${fixture}/repo/test"
 cp "${sourceDirectory}/deploy-config-linux.sh" "${fixture}/repo/"
 cp "${sourceDirectory}/utils/bash/logging-and-output-function.sh" "${fixture}/repo/utils/bash/"
 # Mirror stderr redirection without using the handler's shared /tmp error file.
 printf '%s\n' 'exec 2>"${HOME}/errors.log"' > "${fixture}/repo/utils/bash/error-handling-function.sh"
 printf 'common\n' > "${fixture}/repo/app/common"
+printf 'content\n' > "${fixture}/repo/app/content/existing"
 cp "${fixture}/repo/app/common" "${fixture}/repo/test/common"
 cat > "${fixture}/repo/app/paths.txt" <<'EOF'
 l common $HOME/links/common
@@ -21,6 +22,10 @@ l common $DOTFILES_WORK/destination
 l common ${DOTFILES_CLOUD}/destination
 l $DOTFILES_WORK/keys/* $HOME/keys *
 l missing $HOME/links/missing
+l content/* $HOME/content-links
+l missing-copy $HOME/links/missing-copy *
+l $DOTFILES_WORK/missing $HOME/links/stale-work
+l $DOTFILES_CLOUD/missing $HOME/links/stale-personal
 EOF
 printf '%s\n' 'l common $HOME/links/test-only' > "${fixture}/repo/test/paths.txt"
 
@@ -79,7 +84,7 @@ for skipped in work personal; do
 done
 ln -s "${HOME}/missing" "${HOME}/links/unprotected"
 printf '\n' | deploy --scope none --debug
-[[ -L "${HOME}/links/common" && ! -L "${HOME}/links/unprotected" ]] ||
+[[ -L "${HOME}/links/common" && -L "${HOME}/links/unprotected" ]] ||
     fail "None scope common mapping or cleanup"
 for skipped in work personal; do
     [[ -L "${HOME}/links/${skipped}-absolute" && -L "${HOME}/links/${skipped}-relative" ]] ||
@@ -125,10 +130,67 @@ for scope in work personal; do
     ln -s "${HOME}/${skipped}-other/missing" "${HOME}/links/unprotected"
     printf '\n' | deploy --scope "${scope}" --debug
     [[ -L "${HOME}/links/protected-absolute" && -L "${HOME}/links/protected-relative" &&
-       -L "${HOME}/links/protected-root" && ! -L "${HOME}/links/unprotected" ]] ||
+       -L "${HOME}/links/protected-root" && -L "${HOME}/links/unprotected" ]] ||
         fail "Cleanup protection for ${scope}"
-    hasLog "Skipping cleanup of unselected scope symlink"
 done
+
+newHome mapped-cleanup
+mkdir -p "${HOME}/content-links/nested" "${HOME}/.local/share/Trash/files"
+# Exercise relative targets and lexical '..' normalization at a direct destination.
+ln -s "../../repo/app/nested/../missing" "${HOME}/links/missing"
+ln -s "${fixture}/repo/app/missing-copy" "${HOME}/links/missing-copy"
+ln -s "${fixture}/repo/app/content/stale" "${HOME}/content-links/stale"
+ln -s "../../repo/app/content/.hidden" "${HOME}/content-links/.hidden"
+ln -s "${fixture}/repo/app/content/..hidden" "${HOME}/content-links/..hidden"
+oddName=$'stale link\nwith newline'
+ln -s "${fixture}/repo/app/content/${oddName}" "${HOME}/content-links/${oddName}"
+ln -s "${HOME}/unrelated" "${HOME}/content-links/foreign"
+ln -s "${fixture}/repo/app/content/deep" "${HOME}/content-links/nested/deep"
+ln -s /usr/share/applications/nonexistent-kubuntu-test.desktop "${HOME}/.local/share/Trash/files/launcher.desktop"
+for selected in work personal; do
+    ln -s "${HOME}/${selected}/missing" "${HOME}/links/stale-${selected}"
+done
+deploy --scope none --debug </dev/null
+hasLog "Checking for broken symlinks in selected mapping destinations"
+hasLog "Press 'Enter' to remove them"
+hasLog "No broken symlinks were removed."
+[[ -L "${HOME}/links/missing" ]] || fail "EOF approved cleanup"
+printf 'n\n' | deploy --scope none
+[[ -L "${HOME}/links/missing" ]] || fail "Cleanup refusal ignored"
+deploy --scope none --dry-run </dev/null
+hasLog "Dry run: would offer to remove"
+if grep -Fq "All broken symlinks removed." "${fixture}/output" ||
+   grep -Fq "Press 'Enter'" "${fixture}/output"; then
+    fail "Dry-run cleanup prompted or reported deletion"
+fi
+[[ -L "${HOME}/links/missing" ]] || fail "Dry-run cleanup removed a link"
+printf '\n' | deploy --scope none --debug
+[[ ! -L "${HOME}/links/missing" && ! -L "${HOME}/content-links/stale" &&
+   ! -L "${HOME}/content-links/.hidden" && ! -L "${HOME}/content-links/..hidden" &&
+   ! -L "${HOME}/content-links/${oddName}" ]] ||
+    fail "Broken mapped links were not removed"
+[[ -L "${HOME}/content-links/existing" && -e "${HOME}/content-links/existing" &&
+   -L "${HOME}/links/missing-copy" && -L "${HOME}/content-links/foreign" &&
+   -L "${HOME}/content-links/nested/deep" &&
+   -L "${HOME}/.local/share/Trash/files/launcher.desktop" &&
+   -L "${HOME}/links/stale-work" && -L "${HOME}/links/stale-personal" ]] ||
+    fail "Cleanup touched valid, copy-mode, unrelated, nested, Trash, or unselected links"
+if grep -Fq 'launcher.desktop' "${fixture}/output"; then
+    fail "Cleanup inspected Trash"
+fi
+printf '\n' | deploy --scope work
+[[ ! -L "${HOME}/links/stale-work" && -L "${HOME}/links/stale-personal" ]] ||
+    fail "Cleanup ignored selected scope"
+
+# A different target at a mapped destination must not be claimed by cleanup.
+ln -s "${HOME}/foreign-missing" "${HOME}/links/missing"
+deploy --scope none --debug </dev/null
+[[ -L "${HOME}/links/missing" ]] || fail "Cleanup removed a foreign direct link"
+hasLog "Skipping cleanup of unrelated symlink"
+deploy --scope none --test --debug </dev/null
+if grep -Fq 'Skipping cleanup of unrelated symlink' "${fixture}/output"; then
+    fail "Test mode inspected non-test mappings"
+fi
 
 newHome unavailable
 rm -- "${HOME}/personal/source"
@@ -153,4 +215,4 @@ unset DOTFILES_WORK DOTFILES_CLOUD
 deploy -s none </dev/null
 hasLog "Mapping scope: none"
 
-printf 'All scope deployment tests passed.\n'
+printf 'All scope and cleanup deployment tests passed.\n'

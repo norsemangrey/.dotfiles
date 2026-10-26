@@ -19,6 +19,7 @@ usage() {
     echo "facilitating easy updates and management using Git."
     echo "Scope defaults to both when not specified."
     echo "Repo-local paths always apply. Missing or empty selected roots require confirmation."
+    echo "Broken-symlink cleanup checks selected mapping destinations only."
     echo ""
 }
 
@@ -387,33 +388,84 @@ processItem() {
 
 }
 
-# Function to recursively check for broken symlinks in the home directory
+# Map destination -> expected source; repeated destinations share one cleanup entry.
+# Populated only by selected symlink mappings, never by secure-copy mappings.
+declare -A cleanupTargets=()
+
+# Arguments match a mapping: expanded source, expanded destination, content-only flag.
+registerCleanupTargets() {
+
+    local sourcePath="$1"
+    local destinationPath="$2"
+    local contentOnly="$3"
+    local link
+
+    if [[ "${contentOnly}" == "true" ]]; then
+
+        # Inspect destination children, not source children: deleted sources leave stale links.
+        # The dot patterns include hidden names but exclude '.' and '..'; none recurse.
+        for link in "${destinationPath}"/* "${destinationPath}"/.[!.]* "${destinationPath}"/..?*; do
+
+            # Unmatched globs remain literal strings in Bash; this also filters them out.
+            [[ -L "${link}" ]] || continue
+
+            # Strip a trailing source slash and use only the child's filename.
+            cleanupTargets["${link}"]="${sourcePath%/}/${link##*/}"
+
+        done
+
+    else
+
+        cleanupTargets["${destinationPath}"]="${sourcePath}"
+
+    fi
+
+}
+
+# Check mapped destinations without traversing unrelated home directories.
 symlinkCleanup() {
 
-    logMessage "Checking for broken symlinks in '${HOME}'..." "INFO"
+    logMessage "Checking for broken symlinks in selected mapping destinations..." "INFO"
 
     local brokenSymlinks=()
+    local symlink target cleanupTarget expectedTarget confirm
 
-    # Find all symlinks recursively in home directory
-    while IFS= read -r symlink; do
+    # ! expands array keys (destinations); quoting preserves spaces and newlines.
+    for symlink in "${!cleanupTargets[@]}"; do
 
-        # Resolve the symlink target
-        target=$(readlink "${symlink}")
+        # Deployment may have repaired a link since its destination was registered.
+        [[ -L "${symlink}" && ! -e "${symlink}" ]] || continue
 
-        # Normalize '..' without requiring the target to exist (-m) or following links (-s).
-        if [[ "${target}" == /* ]]; then
+        # Read the stored target, which may be relative and need not exist.
+        if ! target=$(readlink -- "${symlink}"); then
 
-            cleanupTarget=$(realpath -ms -- "${target}")
-
-        else
-
-            # Relative symlink targets are based on the link's directory, not this script.
-            cleanupTarget=$(realpath -ms -- "$(dirname "${symlink}")/${target}")
+            logMessage "Unable to read symlink: ${symlink}" "ERROR"
+            return 1
 
         fi
 
-        # Preserve unselected scope links, matching whole directory names only.
-        # Match the root itself or root/children, never similarly named sibling paths.
+        cleanupTarget="${target}"
+
+        # Relative targets start at the link's parent; %/* strips its final component.
+        if [[ "${cleanupTarget}" != /* ]]; then
+
+            cleanupTarget="${symlink%/*}/${cleanupTarget}"
+        fi
+
+        # Normalize '..' without requiring existence (-m) or following other links (-s).
+        cleanupTarget=$(realpath -ms -- "${cleanupTarget}")
+        expectedTarget=$(realpath -ms -- "${cleanupTargets["${symlink}"]}")
+
+        # A shared destination directory may contain links not owned by this mapping.
+        if [[ "${cleanupTarget}" != "${expectedTarget}" ]]; then
+
+            logMessage "Skipping cleanup of unrelated symlink: ${symlink} -> ${target}" "DEBUG"
+            continue
+
+        fi
+
+        # Also protect literal/common mappings into an unselected external root.
+        # Match root or root/children, never similarly named sibling paths.
         if { [[ "${scope}" != "both" && "${scope}" != "work" && -n "${workRoot}" ]] &&
              [[ "${cleanupTarget}" == "${workRoot%/}" || "${cleanupTarget}" == "${workRoot%/}/"* ]]; } ||
            { [[ "${scope}" != "both" && "${scope}" != "personal" && -n "${personalRoot}" ]] &&
@@ -424,39 +476,46 @@ symlinkCleanup() {
 
         fi
 
-        # Check if the symlink target exists
-        if [[ ! -e "${symlink}" ]]; then
+        logMessage "Broken symlink: ${symlink} -> ${target}" "WARNING"
 
-            logMessage "Broken symlink: ${symlink} -> ${target}" "WARNING"
+        brokenSymlinks+=("${symlink}")
 
-            # Mark the symlink for removal
-            brokenSymlinks+=("${symlink}")
-
-        fi
-
-    done < <(find "${HOME}" -type l)
+    done
 
     # Check for any broken symlinks
     if [ ${#brokenSymlinks[@]} -eq 0 ]; then
 
-        logMessage "No broken symlinks found in ${HOME}." "DEBUG"
+        logMessage "No broken symlinks found in selected mapping destinations." "DEBUG"
 
         return
 
     fi
 
-    # Prompt the user for confirmation of removal
+    # A preview must neither wait for input nor claim that anything was deleted.
+    if [[ "${dryRun}" == "true" ]]; then
+
+        logMessage "Dry run: would offer to remove ${#brokenSymlinks[@]} broken mapped symlinks." "INFO"
+        return
+
+    fi
+
+    # read -p writes to stderr, which the shared error handler redirects to a file.
     echo "Found ${#brokenSymlinks[@]} broken symlinks."
-    read -p "Press 'Enter' to remove them, or type 'N/n' to skip removal: " 2>&1 confirm
+    printf "Press 'Enter' to remove them, or type 'N/n' to skip removal: "
 
-    # If user did not type anything proceed with removal
-    if [ -z "$confirm" ]; then
+    # EOF is not approval; keep the prompt on stdout because stderr is redirected.
+    if read -r confirm && [[ -z "${confirm}" ]]; then
 
-        # Remove all broken symlinks
+        # Recheck after the prompt in case another process repaired or replaced a link.
         for symlink in "${brokenSymlinks[@]}"; do
 
-            if [[ "${dryRun}" != "true" ]]; then
-                rm -v "${symlink}"
+            [[ -L "${symlink}" && ! -e "${symlink}" ]] || continue
+
+            if ! rm -v -- "${symlink}"; then
+
+                logMessage "Unable to remove broken symlink: ${symlink}" "ERROR"
+                return 1
+
             fi
 
         done
@@ -486,8 +545,9 @@ else
 
 fi
 
-# Find and process all paths.txt files in subdirectories
-find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; do
+# Process substitution keeps both mapping loops in this shell so cleanupTargets survives.
+# NUL-delimited filenames (-print0 / -d '') preserve spaces and newlines in repo paths.
+while IFS= read -r -d '' pathsFile; do
 
     # Get the application path by stripping the filename
     appPath=$(dirname "$pathsFile")
@@ -502,8 +562,8 @@ find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
 
     logMessage "Processing paths for '${appDirectory}'..." "INFO"
 
-    # Process only lines starting with "l "
-    grep '^l ' "${pathsFile}" | while IFS= read -r line; do
+    # The input redirection below selects only mapping lines starting with "l ".
+    while IFS= read -r line; do
 
         # Extract target, destination, and mode columns from the line
         targetPathRaw=$(echo "${line}" | awk '{print $2}')
@@ -548,6 +608,14 @@ find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
         # Resolve/expand initial absolute and relative paths (stripping trailing '*' only if present)
         targetPathAbsolute=$(expandPath "${targetPathRaw%\*}" "${appPath}")
         symlinkPath=$(expandPath "${symlinkPathRaw}" "${appPath}")
+
+        # Scope filtering has already run; secure copies never belong to symlink cleanup.
+        # Register before source validation so stale links to missing sources are checked.
+        if [[ "${copySecureMode}" != "true" ]]; then
+
+            registerCleanupTargets "${targetPathAbsolute}" "${symlinkPath}" "${handleContentOnly}"
+
+        fi
 
         # Verify/test target path
 
@@ -606,9 +674,9 @@ find "${searchPath}" -type f -name "paths.txt" | while IFS= read -r pathsFile; d
 
         fi
 
-    done
+    done < <(grep '^l ' "${pathsFile}")
 
-done
+done < <(find "${searchPath}" -type f -name "paths.txt" -print0)
 
 # Cleanup broken symlinks
 symlinkCleanup
