@@ -1,10 +1,10 @@
 # Misc Paths
-export DOTFILES="$HOME/workspace/personal/repos/.dotfiles"
-export DOTFILES_WORK="$HOME/cloud/work/setup/dotfiles"
-export DOTFILES_CLOUD="$HOME/cloud/personal/setup/dotfiles"
-export WORKSPACE="$HOME/workspace"
-export REPOS_PERSONAL="$HOME/workspace/personal/repos"
-export REPOS_WORK="$HOME/workspace/work/repos"
+export DOTFILES="$HOME/Workspace/Personal/repos/.dotfiles"
+export DOTFILES_WORK="$HOME/Cloud/Work/setup/dotfiles"
+export DOTFILES_CLOUD="$HOME/Cloud/Personal/Data/setup/dotfiles"
+export WORKSPACE="$HOME/Workspace"
+export REPOS_PERSONAL="$HOME/Workspace/Personal/repos"
+export REPOS_WORK="$HOME/Workspace/Work/repos"
 export LOG_PATH="$HOME/logs"
 
 # XDG

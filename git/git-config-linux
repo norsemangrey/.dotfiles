@@ -1,7 +1,7 @@
-[includeIf "gitdir:~/workspace/work/repos/"]
-    path = ~/workspace/work/.gitconfig-work
-[includeIf "gitdir:~/workspace/personal/repos/"]
-    path = ~/workspace/personal/.gitconfig-personal
+[includeIf "gitdir:~/Workspace/Work/repos/"]
+    path = ~/Workspace/Work/.gitconfig-work
+[includeIf "gitdir:~/Workspace/Personal/repos/"]
+    path = ~/Workspace/Personal/.gitconfig-personal
 
 [pull]
 
