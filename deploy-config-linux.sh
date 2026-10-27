@@ -79,10 +79,11 @@ if [[ -n "${scope}" && "${scope}" != "work" && "${scope}" != "personal" && "${sc
 
 fi
 
-# Set external logger- and error handling script paths
+# Set external utility script paths
 # Getting absolute path as script might be called from another script
 externalLogger=$(dirname "${BASH_SOURCE[0]}")"/utils/bash/logging-and-output-function.sh"
 externalErrorHandler=$(dirname "${BASH_SOURCE[0]}")"/utils/bash/error-handling-function.sh"
+externalPlatform=$(dirname "${BASH_SOURCE[0]}")"/utils/bash/platform.sh"
 
 # Source external logger and error handler (but allow execution without them)
 source "${externalErrorHandler}" "Dotfiles scrip failed" || true
@@ -99,6 +100,11 @@ if [[ $(type -t logMessage) != function ]]; then
 
     }
 
+fi
+
+if ! source "${externalPlatform}"; then
+    logMessage "Unable to load platform detection. Initialize the utils/bash submodule." "ERROR"
+    exit 1
 fi
 
 # Use verbose logging
@@ -130,17 +136,8 @@ run() {
 
 }
 
-# Check if the script is running in WSL
-isWsl() {
-
-    # Check /proc/version for WSL-specific terms
-    grep -qEi "microsoft.*(subsystem|standard)" /proc/version
-
-}
-
 # Set dotfiles directory and log file
 dotfilesDirectory=$(dirname "${BASH_SOURCE[0]}")
-
 
 # Function to expand environment variables  and resolve the actual path
 expandPath() {
@@ -182,7 +179,7 @@ expandPath() {
 # TODO: Might need to re-think the env setup....
 
 # Set environment variable file path
-if isWsl; then
+if [[ "${platform}" == "wsl" ]]; then
 
     # Set environment variable file path for WSL
     envFile="${dotfilesDirectory}/.env.wsl"

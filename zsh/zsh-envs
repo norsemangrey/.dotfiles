@@ -101,13 +101,3 @@ export FZF_CTRL_T_OPTS='
 export FZF_ALT_C_OPTS='
   --border-label="Directory Navigation"
   --preview "lsd --tree --color always --icon always {}"'
-
-# +----------+
-# | KEYCHAIN |
-# +----------+
-
-# Load keychain for all agents
-[[ -f ~/.config/zsh/scripts/keychain-setup.zsh ]] && source ~/.config/zsh/scripts/keychain-setup.zsh
-
-# Ensure GPG can access the current terminal for passphrase prompts
-export GPG_TTY=$(tty)

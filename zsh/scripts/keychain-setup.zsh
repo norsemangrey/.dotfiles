@@ -5,7 +5,7 @@ if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
     SSH_KEYS=()
 
     # Add keys to list
-    for key in ~/.ssh/keys/*_ed25519; do
+    for key in ~/.ssh/keys/*_ed25519(N); do
 
         # Check file and add
         [[ -f "$key" ]] && SSH_KEYS+=("$key")

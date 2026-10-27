@@ -6,6 +6,18 @@ export PATH=$PATH:$HOME/.local/bin
 # Stop annoying beeping
 unsetopt BEEP
 
+# +----------+
+# | KEYCHAIN |
+# +----------+
+
+# Desktop sessions also use Zsh, but must never wait for terminal passphrase prompts.
+if [[ -o interactive && -t 0 && -t 1 ]]; then
+
+    export GPG_TTY=$(tty)
+    source "$ZDOTDIR/scripts/keychain-setup.zsh"
+
+fi
+
 # +---------+
 # | PLUGINS |
 # +---------+
@@ -279,30 +291,3 @@ if [[ -o login ]] && [[ -z "$TMUX" ]]; then
   fastfetch
 
 fi
-
-# +----------+
-# | KEYCHAIN |
-# +----------+
-
-# # Initialize key list
-# SSH_KEYS=()
-
-# # Add keys to list
-# for key in ~/.ssh/keys/*_ed25519; do
-
-#   # Check file and add
-#   if [[ -f "$key" ]]; then
-
-#     SSH_KEYS+=("$key")
-
-#   fi
-
-# done
-
-# # Load all keys into keychain
-# if [[ ${#SSH_KEYS[@]} -gt 0 ]]; then
-
-#   # Start keychain and load SSH keys
-#   eval $(keychain --agents ssh --quiet --eval "${SSH_KEYS[@]}")
-
-# fi

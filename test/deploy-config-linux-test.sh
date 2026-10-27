@@ -8,6 +8,7 @@ mkdir -p "${fixture}/repo/utils/bash" "${fixture}/repo/app/content" "${fixture}/
 cp "${sourceDirectory}/deploy-config-linux.sh" "${fixture}/repo/"
 cp -r "${sourceDirectory}/konsole" "${fixture}/repo/"
 cp "${sourceDirectory}/utils/bash/logging-and-output-function.sh" "${fixture}/repo/utils/bash/"
+cp "${sourceDirectory}/utils/bash/platform.sh" "${fixture}/repo/utils/bash/"
 # Mirror stderr redirection without using the handler's shared /tmp error file.
 printf '%s\n' 'exec 2>"${HOME}/errors.log"' > "${fixture}/repo/utils/bash/error-handling-function.sh"
 printf 'common\n' > "${fixture}/repo/app/common"
@@ -234,4 +235,16 @@ unset DOTFILES_WORK DOTFILES_CLOUD
 deploy -s none </dev/null
 hasLog "Mapping scope: none"
 
-printf 'All scope and cleanup deployment tests passed.\n'
+for detected in wsl physical; do
+    newHome "platform-${detected}"
+    platform="${detected}" environment=headless deploy -s none --debug </dev/null
+    suffix=linux
+    [[ "${detected}" != wsl ]] || suffix=wsl
+    hasLog "Loading environment variables from file (${fixture}/repo/.env.${suffix})"
+done
+
+rm -- "${fixture}/repo/utils/bash/platform.sh"
+if deploy -s none </dev/null; then fail "Missing platform helper accepted"; fi
+hasLog "Unable to load platform detection"
+
+printf 'All scope, cleanup, and platform deployment tests passed.\n'
