@@ -168,6 +168,10 @@ class ZshStartupTests(unittest.TestCase):
         self.run_shell("-ic", terminal=True)
         self.assert_terminal_agents()
 
+    def test_fastfetch_in_every_terminal_outside_tmux(self):
+        self.run_shell("-ic", terminal=True)
+        self.assertTrue(any(call.startswith("fastfetch|") for call in self.read_calls()))
+
     def test_tmux_terminal(self):
         self.add_keys()
         self.env["TMUX"] = "/tmp/dummy-tmux,123,0"

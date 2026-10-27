@@ -284,8 +284,8 @@ eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/themes/posh-custom
 # | INFO |
 # +------+
 
-# Display system information only for login shells and not inside tmux
-if [[ -o login ]] && [[ -z "$TMUX" ]]; then
+# Display system information in every new terminal session (login or not), but not inside tmux
+if [[ -o interactive ]] && [[ -z "$TMUX" ]]; then
 
   fastfetch
 
