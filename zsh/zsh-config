@@ -22,19 +22,18 @@ fi
 # | PLUGINS |
 # +---------+
 
-# Check plugins only on login shell
+# Load plugin management functions and plugin list
+source $ZDOTDIR/scripts/update-plugins.zsh
+
+# Update plugins only on login shell (outside tmux)
 if [[ -o login ]] && [[ -z "$TMUX" ]]; then
 
-  # Load plugin scripts
-  source $ZDOTDIR/scripts/update-plugins.zsh
+  updateZshPlugins
 
-  # Clone or update plugins
-  cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-completions"
-  cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-autosuggestions"
-  cloneOrUpdatePlugin "https://github.com/zsh-users/zsh-syntax-highlighting"
-  cloneOrUpdatePlugin "https://github.com/Aloxaf/fzf-tab"
-  cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-ssh"
-  cloneOrUpdatePlugin "https://github.com/norsemangrey/zsh-active-cheatsheet.git"
+# Other interactive shells (e.g. desktop terminals) only install missing plugins
+elif [[ -o interactive ]]; then
+
+  installMissingZshPlugins
 
 fi
 
@@ -204,7 +203,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 
 
 # Load Auto-Suggestions plugin
-source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+[[ -r $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Set the font highlight style of the auto-suggestions
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=white,bold,underline"
@@ -216,7 +215,7 @@ ZSH_AUTOSUGGEST_USE_ASYNC=1
 # +--------------+
 
 # Load Syntax Highlighting plugin
-source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[[ -r $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # +-----+
 # | FZF |
@@ -227,7 +226,7 @@ source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source   /usr/share/doc/fzf/examples/completion.zsh
 
 # Load FZF Tab Completion plugin
-source $ZDOTDIR/plugins/fzf-tab/fzf-tab.plugin.zsh
+[[ -r $ZDOTDIR/plugins/fzf-tab/fzf-tab.plugin.zsh ]] && source $ZDOTDIR/plugins/fzf-tab/fzf-tab.plugin.zsh
 
 # Ensure that fzf-tab uses the default options for FZF
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
@@ -240,7 +239,7 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd --tree --color=always --icon=al
 # +-----+
 
 # Load SSH completion plugin
-source $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh
+[[ -r $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh ]] && source $ZDOTDIR/plugins/zsh-ssh/zsh-ssh.zsh
 
 zstyle ':completion:*:*:ssh:*' fzf-completion yes
 
@@ -255,7 +254,7 @@ compdef _ssh ssh
 export ZSH_ACTIVE_CHEATSHEET_DIRS=("$HOME/.config")
 
 # Load the cheatsheet plugin
-source $ZDOTDIR/plugins/zsh-active-cheatsheet/zsh-active-cheatsheet.plugin.zsh
+[[ -r $ZDOTDIR/plugins/zsh-active-cheatsheet/zsh-active-cheatsheet.plugin.zsh ]] && source $ZDOTDIR/plugins/zsh-active-cheatsheet/zsh-active-cheatsheet.plugin.zsh
 
 
 # +--------+

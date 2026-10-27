@@ -5,9 +5,9 @@ export DOTFILES_CLOUD="$HOME/Cloud/Personal/Data/setup/dotfiles"
 export WORKSPACE="$HOME/Workspace"
 export REPOS_PERSONAL="$HOME/Workspace/Personal/repos"
 export REPOS_WORK="$HOME/Workspace/Work/repos"
-export LOG_PATH="$HOME/logs"
+export LOG_PATH="$HOME/Logs"
 
 # XDG
 export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$XDG_CONFIG_HOME/local/share"
-export XDG_CACHE_HOME="$XDG_CONFIG_HOME/cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"

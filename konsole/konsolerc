@@ -1,2 +1,7 @@
 [Desktop Entry]
 DefaultProfile=SolarizedLight.profile
+
+[LightDarkTheme]
+DarkThemeProfile=Solarized Dark (modified)
+LightThemeProfile=Solarized Light Customized
+SyncProfileWithSystemTheme=true

@@ -42,7 +42,8 @@ class ZshStartupTests(unittest.TestCase):
 
         # Exercise the real startup files without network, plugins, or real agents.
         (self.config / "scripts/update-plugins.zsh").write_text(
-            "cloneOrUpdatePlugin() { :; }\n"
+            'updateZshPlugins() { print update >> "$HOME/plugin-calls"; }\n'
+            'installMissingZshPlugins() { print install-missing >> "$HOME/plugin-calls"; }\n'
         )
         for plugin in (
             "zsh-autosuggestions/zsh-autosuggestions.zsh",
@@ -198,15 +199,40 @@ class ZshStartupTests(unittest.TestCase):
             self.assertIn(address, output)
             self.assert_terminal_agents(ssh=False)
 
+    def read_plugin_calls(self):
+        path = self.home / "plugin-calls"
+        return path.read_text().splitlines() if path.exists() else []
+
+    def test_plugins_updated_only_in_login_shell(self):
+        self.run_shell("-lic", terminal=True)
+        self.assertEqual(self.read_plugin_calls(), ["update"])
+
+    def test_plugins_installed_in_non_login_desktop_shell(self):
+        self.env["XDG_SESSION_TYPE"] = "wayland"
+        self.run_shell("-ic", terminal=True)
+        self.assertEqual(self.read_plugin_calls(), ["install-missing"])
+
+    def test_missing_plugins_do_not_print_errors(self):
+        shutil.rmtree(self.config / "plugins")
+        self.run_shell("-ic", terminal=True)
+
     def test_noninteractive_bash_environment_loading(self):
-        result = subprocess.run(
-            ["bash", "-c", 'source "$HOME/.env"; printf "%s" "$XDG_DATA_HOME"'],
-            env=self.env, stdin=subprocess.DEVNULL, capture_output=True, text=True,
-            timeout=10,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout, str(self.home / ".config/local/share"))
-        self.assertEqual(self.read_calls(), [])
+        for session in (None, "tty", "wayland", "x11"):
+            with self.subTest(session=session):
+                env = dict(self.env)
+                if session:
+                    env["XDG_SESSION_TYPE"] = session
+                result = subprocess.run(
+                    ["bash", "-c", 'source "$HOME/.env"; printf "%s|%s|%s" "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" "$XDG_CACHE_HOME"'],
+                    env=env, stdin=subprocess.DEVNULL, capture_output=True, text=True,
+                    timeout=10,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(
+                    result.stdout,
+                    f"{self.home}/.config|{self.home}/.local/share|{self.home}/.cache",
+                )
+                self.assertEqual(self.read_calls(), [])
 
 
 if __name__ == "__main__":

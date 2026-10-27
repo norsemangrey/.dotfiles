@@ -39,3 +39,39 @@ cloneOrUpdatePlugin() {
     fi
 
 }
+
+# Zsh plugins (Git repositories) managed by this configuration
+zshPlugins=(
+    "https://github.com/zsh-users/zsh-completions"
+    "https://github.com/zsh-users/zsh-autosuggestions"
+    "https://github.com/zsh-users/zsh-syntax-highlighting"
+    "https://github.com/Aloxaf/fzf-tab"
+    "https://github.com/norsemangrey/zsh-ssh"
+    "https://github.com/norsemangrey/zsh-active-cheatsheet.git"
+)
+
+# Clone all missing plugins (no updates, no network access if everything is installed)
+installMissingZshPlugins() {
+
+    local repoUrl
+
+    for repoUrl in "${zshPlugins[@]}"; do
+
+        [[ -d "${zshPluginDir}/$(basename "$repoUrl" .git)" ]] || cloneOrUpdatePlugin "$repoUrl"
+
+    done
+
+}
+
+# Clone missing plugins and update the existing ones
+updateZshPlugins() {
+
+    local repoUrl
+
+    for repoUrl in "${zshPlugins[@]}"; do
+
+        cloneOrUpdatePlugin "$repoUrl"
+
+    done
+
+}
