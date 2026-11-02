@@ -1,7 +1,7 @@
 # Misc Paths
 export DOTFILES="$HOME/Workspace/Personal/repos/.dotfiles"
 export DOTFILES_WORK="$HOME/Cloud/Work/setup/dotfiles"
-export DOTFILES_CLOUD="$HOME/Cloud/Personal/Data/setup/dotfiles"
+export DOTFILES_CLOUD="$HOME/Cloud/Personal/setup/dotfiles"
 export WORKSPACE="$HOME/Workspace"
 export REPOS_PERSONAL="$HOME/Workspace/Personal/repos"
 export REPOS_WORK="$HOME/Workspace/Work/repos"
